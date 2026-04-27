@@ -1,0 +1,2081 @@
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --ink-soft: #4a4a4a;
+    --ink-mute: #767676;
+    --ink-faint: #a8a8a8;
+    --line: rgba(0,0,0,0.08);
+    --line-strong: rgba(0,0,0,0.16);
+    --paper: #fdfcf8;
+    --paper-warm: #f7f4ec;
+    --card: #ffffff;
+    --purple: #534AB7;
+    --purple-soft: #EEEDFE;
+    --purple-ink: #3C3489;
+    --teal: #1D9E75;
+    --teal-soft: #E1F5EE;
+    --teal-ink: #085041;
+    --coral: #D85A30;
+    --coral-soft: #FAECE7;
+    --coral-ink: #712B13;
+    --amber: #BA7517;
+    --amber-soft: #FAEEDA;
+    --amber-ink: #633806;
+    --gold: #c9a961;
+    --terminal-bg: #0e1116;
+    --terminal-ink: #d4d4d4;
+    --terminal-green: #98c379;
+    --terminal-cyan: #56b6c2;
+    --terminal-yellow: #e5c07b;
+    --terminal-mute: #5c6370;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: block; animation: pageIn 0.4s ease; }
+  @keyframes pageIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 32px 28px 80px; }
+
+  /* TOP NAV */
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(253, 252, 248, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--line);
+    padding: 12px 28px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .topnav-title {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+  }
+  .topnav-spacer { flex: 1; }
+  .topnav-btn {
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--ink-soft);
+    background: transparent;
+    border: 0.5px solid var(--line-strong);
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .topnav-btn:hover { background: var(--card); color: var(--ink); }
+  .topnav-btn.cur { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  /* COVER */
+  .cover {
+    min-height: calc(100vh - 50px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 28px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover-inner {
+    max-width: 640px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+  .cover-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 32px;
+  }
+  .cover-eyebrow span { display: inline-block; margin: 0 12px; color: var(--ink-faint); }
+  .cover-title {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-size: 60px;
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 14px;
+  }
+  .cover-title em { font-style: italic; color: var(--gold); font-weight: 400; }
+  .cover-subtitle {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-style: italic;
+    font-size: 19px;
+    color: var(--ink-soft);
+    margin: 0 0 36px;
+    line-height: 1.5;
+  }
+  .cover-author {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 48px;
+  }
+  .cover-author strong {
+    color: var(--ink-soft);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    font-size: 13px;
+    display: block;
+    margin-top: 4px;
+  }
+  .cover-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    background: var(--card);
+    border: 0.5px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .cover-stat { padding: 18px 12px; border-right: 0.5px solid var(--line); }
+  .cover-stat:last-child { border-right: none; }
+  .cover-stat-num {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .cover-stat-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+  .cover-progress-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .cover-progress {
+    text-align: left;
+    background: var(--card);
+    border: 0.5px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .cover-progress-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+  .cover-progress-row strong { font-weight: 500; color: var(--ink); }
+  .cover-bar {
+    height: 6px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .cover-fill { height: 100%; border-radius: 999px; transition: width 0.6s ease; }
+  .cover-fill.found { background: var(--purple); }
+  .cover-fill.clin { background: var(--teal); }
+
+  .cover-shelves {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+  .shelf {
+    text-align: left;
+    padding: 12px;
+    background: var(--card);
+    border: 0.5px solid var(--line);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .shelf:hover { border-color: var(--purple); transform: translateY(-1px); }
+  .shelf .shelf-icon { font-size: 22px; margin-bottom: 6px; }
+  .shelf .shelf-name { font-size: 12px; font-weight: 500; margin-bottom: 2px; }
+  .shelf .shelf-sub { font-size: 10px; color: var(--ink-mute); }
+
+  .cover-cta {
+    display: inline-block;
+    padding: 14px 32px;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cover-cta:hover { background: #000; transform: translateY(-1px); }
+  .cover-secondary {
+    display: block;
+    margin-top: 16px;
+    background: transparent;
+    border: none;
+    color: var(--ink-mute);
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: var(--ink-faint);
+    text-underline-offset: 3px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .cover-secondary:hover { color: var(--ink); }
+  .cover-ornament {
+    position: absolute;
+    color: var(--ink-faint);
+    opacity: 0.4;
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-size: 22px;
+  }
+  .cover-ornament.tl { top: 36px; left: 36px; }
+  .cover-ornament.tr { top: 36px; right: 36px; }
+  .cover-ornament.bl { bottom: 36px; left: 36px; }
+  .cover-ornament.br { bottom: 36px; right: 36px; }
+
+  /* TOC */
+  .toc-header { text-align: center; margin-bottom: 32px; padding-top: 24px; }
+  .toc-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 12px;
+  }
+  .toc-title {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-size: 40px;
+    font-weight: 400;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .toc-summary {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-style: italic;
+    color: var(--ink-soft);
+    margin-top: 8px;
+    font-size: 15px;
+  }
+  .part { margin-bottom: 48px; }
+  .part-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 0.5px solid var(--line);
+  }
+  .part-num {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-style: italic;
+    color: var(--ink-faint);
+    font-size: 14px;
+    letter-spacing: 0.05em;
+  }
+  .part-name {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-size: 22px;
+    font-weight: 400;
+    margin: 0;
+    flex: 1;
+  }
+  .part-meta { font-size: 12px; color: var(--ink-mute); }
+  .toc-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 10px 0;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .toc-row:hover:not(:disabled) { color: var(--purple); }
+  .toc-row:hover:not(:disabled) .toc-leader { border-bottom-color: var(--purple); }
+  .toc-row:disabled { cursor: not-allowed; color: var(--ink-faint); }
+  .toc-status { width: 18px; flex-shrink: 0; font-size: 13px; color: var(--ink-mute); }
+  .toc-status.done { color: var(--teal); }
+  .toc-num {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-style: italic;
+    width: 32px;
+    flex-shrink: 0;
+    color: var(--ink-mute);
+    font-size: 13px;
+  }
+  .toc-label { flex: 0 0 auto; max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .toc-leader {
+    flex: 1;
+    border-bottom: 1px dotted var(--line-strong);
+    margin: 0 4px 4px;
+    min-width: 12px;
+    transition: border-color 0.15s;
+  }
+  .toc-page {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-mute);
+    font-size: 13px;
+  }
+  .toc-row.featured .toc-label { font-weight: 500; }
+  .toc-row.featured .toc-status { color: var(--purple); }
+
+  /* Promo banners on TOC */
+  .promo-banner {
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+    width: 100%;
+    border: none;
+    font-family: inherit;
+  }
+  .promo-banner:hover { transform: translateY(-1px); }
+  .promo-banner.codex {
+    background: var(--terminal-bg);
+    color: var(--terminal-ink);
+    border: 0.5px solid var(--terminal-mute);
+  }
+  .promo-banner.codex:hover { border-color: var(--terminal-cyan); }
+  .promo-banner.toolkit {
+    background: linear-gradient(135deg, #2a1f4d 0%, #4a2960 100%);
+    color: #fff;
+    border: 0.5px solid rgba(255,255,255,0.1);
+  }
+  .promo-banner.toolkit:hover { border-color: rgba(255,255,255,0.3); }
+  .promo-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-weight: 700;
+  }
+  .promo-banner.codex .promo-icon { background: var(--terminal-green); color: var(--terminal-bg); }
+  .promo-banner.toolkit .promo-icon { background: rgba(255,255,255,0.15); color: #fff; }
+  .promo-meta { flex: 1; }
+  .promo-eyebrow {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    opacity: 0.7;
+  }
+  .promo-banner.codex .promo-eyebrow { color: var(--terminal-cyan); opacity: 1; }
+  .promo-banner.toolkit .promo-eyebrow { color: #d4b3ff; opacity: 1; }
+  .promo-title {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  .promo-sub { font-size: 13px; opacity: 0.7; }
+  .promo-arrow { font-size: 18px; opacity: 0.6; }
+
+  /* BADGE WALL */
+  .badge-wall {
+    margin-top: 48px;
+    padding: 28px;
+    background: var(--card);
+    border: 0.5px solid var(--line);
+    border-radius: 14px;
+  }
+  .badge-wall-title {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-size: 18px;
+    margin: 0 0 6px;
+    text-align: center;
+  }
+  .badge-wall-sub { text-align: center; font-size: 13px; color: var(--ink-mute); margin: 0 0 24px; }
+  .badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 14px;
+  }
+  .badge-tile {
+    text-align: center;
+    padding: 16px 10px;
+    border-radius: 10px;
+    background: var(--paper-warm);
+    border: 0.5px solid var(--line);
+  }
+  .badge-tile.locked { opacity: 0.45; }
+  .badge-tile.earned { background: var(--purple-soft); border-color: rgba(83,74,183,0.2); }
+  .badge-tile-icon { font-size: 28px; margin-bottom: 6px; display: block; }
+  .badge-tile-name { font-size: 11px; font-weight: 500; line-height: 1.3; }
+  .badge-tile.locked .badge-tile-name { color: var(--ink-faint); }
+
+  /* Chapter shell */
+  .chapter-frontispiece {
+    text-align: center;
+    padding: 32px 0 40px;
+    border-bottom: 0.5px solid var(--line);
+    margin-bottom: 32px;
+  }
+  .ch-num-line {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 10px;
+  }
+  .ch-title {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-size: 38px;
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 12px;
+  }
+  .ch-subtitle {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--ink-soft);
+    margin: 0 0 24px;
+  }
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0 32px;
+    padding: 12px 16px;
+    background: var(--card);
+    border: 0.5px solid var(--line);
+    border-radius: 12px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .progress-row .bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(83,74,183,0.12);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-row .fill {
+    height: 100%;
+    background: var(--purple);
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+  .step-counter { font-variant-numeric: tabular-nums; font-weight: 500; color: var(--ink); min-width: 56px; }
+  .step { display: none; animation: fade 0.35s ease; }
+  .step.active { display: block; }
+  @keyframes fade {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .ch-h2 {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-size: 24px;
+    font-weight: 400;
+    margin: 0 0 16px;
+  }
+  p { margin: 0 0 16px; }
+  .callout {
+    background: var(--card);
+    border: 0.5px solid var(--line);
+    border-left: 3px solid var(--purple);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 20px 0;
+  }
+  .callout.teal { border-left-color: var(--teal); }
+  .callout.coral { border-left-color: var(--coral); }
+  .callout.amber { border-left-color: var(--amber); }
+  .callout-label {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--purple-ink);
+    margin-bottom: 6px;
+  }
+  .callout.teal .callout-label { color: var(--teal-ink); }
+  .callout.coral .callout-label { color: var(--coral-ink); }
+  .callout.amber .callout-label { color: var(--amber-ink); }
+  .callout p:last-child { margin-bottom: 0; }
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 0.5px solid var(--line);
+  }
+  button.btn {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 0.5px solid var(--line-strong);
+    background: var(--card);
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  button.btn:hover:not(:disabled) { background: var(--paper-warm); border-color: rgba(0,0,0,0.24); }
+  button.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  button.btn.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+  button.btn.primary:hover:not(:disabled) { background: #000; }
+
+  /* CODEX page */
+  .codex-page { background: var(--paper); }
+  .codex-hero {
+    background: var(--terminal-bg);
+    color: var(--terminal-ink);
+    padding: 60px 28px 80px;
+  }
+  .codex-hero-inner { max-width: 760px; margin: 0 auto; }
+  .codex-prompt {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    color: var(--terminal-mute);
+    margin-bottom: 12px;
+  }
+  .codex-prompt .pgreen { color: var(--terminal-green); }
+  .codex-prompt .pcyan { color: var(--terminal-cyan); }
+  .codex-prompt .pyellow { color: var(--terminal-yellow); }
+  .codex-prompt .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background: var(--terminal-ink);
+    vertical-align: text-bottom;
+    animation: blink 1s steps(2) infinite;
+    margin-left: 2px;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  .codex-title {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 44px;
+    font-weight: 600;
+    margin: 0 0 14px;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .codex-title .accent { color: var(--terminal-green); }
+  .codex-subtitle {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--terminal-mute);
+    margin: 0 0 24px;
+    max-width: 540px;
+  }
+  .codex-source {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    color: var(--terminal-mute);
+    background: rgba(86, 182, 194, 0.08);
+    padding: 8px 12px;
+    border-radius: 6px;
+    border-left: 2px solid var(--terminal-cyan);
+    display: inline-block;
+  }
+  .codex-body { max-width: 760px; margin: 0 auto; padding: 56px 28px 80px; }
+  .codex-section { margin-bottom: 56px; }
+  .codex-section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 10px;
+    border-bottom: 0.5px solid var(--line);
+  }
+  .codex-section-num {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    color: var(--terminal-green);
+    background: var(--terminal-bg);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+  .codex-section-name {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-size: 26px;
+    font-weight: 400;
+    margin: 0;
+    flex: 1;
+  }
+  .codex-section-meta {
+    font-size: 12px;
+    color: var(--ink-mute);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  .quote-card {
+    background: var(--card);
+    border: 0.5px solid var(--line);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .quote-card::before {
+    content: '"';
+    position: absolute;
+    top: 8px;
+    left: 16px;
+    font-family: "Iowan Old Style", serif;
+    font-size: 60px;
+    color: var(--terminal-green);
+    opacity: 0.15;
+    line-height: 1;
+  }
+  .quote-text {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--ink);
+    margin: 8px 0 16px;
+    position: relative;
+  }
+  .quote-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 12px; color: var(--ink-mute); }
+  .quote-tag {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    background: var(--paper-warm);
+    color: var(--ink-soft);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+  }
+  .quote-source { font-style: italic; }
+  .quote-link { color: var(--purple); text-decoration: none; font-size: 12px; margin-left: auto; }
+  .quote-link:hover { text-decoration: underline; }
+  .quote-card.featured { background: var(--terminal-bg); color: var(--terminal-ink); border: none; }
+  .quote-card.featured .quote-text {
+    color: var(--terminal-ink);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-style: normal;
+    font-size: 16px;
+  }
+  .quote-card.featured::before { color: var(--terminal-green); opacity: 0.3; }
+  .quote-card.featured .quote-tag { background: rgba(255,255,255,0.06); color: var(--terminal-cyan); }
+  .quote-card.featured .quote-meta { color: var(--terminal-mute); }
+  .quote-card.featured .quote-link { color: var(--terminal-cyan); }
+  .tip-card {
+    background: var(--card);
+    border: 0.5px solid var(--line);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 14px;
+  }
+  .tip-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .tip-num {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    color: var(--terminal-green);
+    background: var(--terminal-bg);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .tip-title { font-size: 16px; font-weight: 500; flex: 1; }
+  .tip-tag {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    background: var(--paper-warm);
+    color: var(--ink-soft);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+  }
+  .tip-body { font-size: 15px; line-height: 1.65; color: var(--ink-soft); }
+  .tip-body p { margin: 0 0 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+  .tip-body strong { color: var(--ink); font-weight: 500; }
+  .tip-body em.clinical {
+    background: var(--teal-soft);
+    color: var(--teal-ink);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-style: normal;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .framework-card {
+    background: var(--card);
+    border: 0.5px solid var(--line);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 16px;
+  }
+  .framework-card.terminal {
+    background: var(--terminal-bg);
+    color: var(--terminal-ink);
+    border: 0.5px solid var(--terminal-mute);
+  }
+  .framework-eyebrow {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--terminal-green);
+    margin-bottom: 8px;
+  }
+  .framework-title {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-size: 22px;
+    margin: 0 0 12px;
+    font-weight: 400;
+  }
+  .framework-card.terminal .framework-title {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .framework-body { font-size: 15px; line-height: 1.7; }
+  .framework-body p { margin: 0 0 14px; }
+  .framework-body p:last-child { margin-bottom: 0; }
+  .caveat-box {
+    background: var(--coral-soft);
+    border-left: 3px solid var(--coral);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin: 28px 0;
+  }
+  .caveat-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--coral-ink);
+    margin-bottom: 6px;
+  }
+  .caveat-box p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--ink); }
+  .caveat-box p strong { color: var(--coral-ink); }
+  .resource-link {
+    display: block;
+    padding: 14px 18px;
+    background: var(--card);
+    border: 0.5px solid var(--line);
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--ink);
+    margin-bottom: 8px;
+    transition: all 0.15s;
+  }
+  .resource-link:hover { border-color: var(--purple); }
+  .resource-link .rl-meta {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    color: var(--terminal-green);
+    margin-bottom: 4px;
+  }
+  .resource-link .rl-title { font-weight: 500; font-size: 14px; }
+  .resource-link .rl-desc { font-size: 13px; color: var(--ink-mute); margin-top: 2px; }
+  .badge-reveal {
+    text-align: center;
+    padding: 40px 24px;
+    background: linear-gradient(180deg, var(--purple-soft) 0%, var(--paper) 100%);
+    border-radius: 16px;
+    margin: 24px 0;
+  }
+  .badge-icon {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: var(--purple);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 20px rgba(83,74,183,0.3);
+  }
+  .badge-name {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-size: 22px;
+    font-weight: 400;
+    margin-bottom: 8px;
+  }
+  .badge-flavor { font-size: 14px; color: var(--ink-soft); }
+
+  /* TOOLKIT page */
+  .toolkit-page { background: var(--paper); }
+  .toolkit-hero {
+    background: linear-gradient(135deg, #2a1f4d 0%, #4a2960 60%, #6b3868 100%);
+    color: #fff;
+    padding: 60px 28px 70px;
+    position: relative;
+    overflow: hidden;
+  }
+  .toolkit-hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08), transparent);
+    border-radius: 50%;
+  }
+  .toolkit-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -80px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(212,179,255,0.1), transparent);
+    border-radius: 50%;
+  }
+  .toolkit-hero-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .toolkit-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #d4b3ff;
+    margin-bottom: 14px;
+  }
+  .toolkit-title {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-size: 48px;
+    font-weight: 400;
+    margin: 0 0 14px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .toolkit-title em { color: #d4b3ff; font-style: italic; }
+  .toolkit-subtitle {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-style: italic;
+    font-size: 17px;
+    color: rgba(255,255,255,0.75);
+    margin: 0 0 28px;
+    max-width: 560px;
+    line-height: 1.5;
+  }
+  .toolkit-method {
+    background: rgba(255,255,255,0.08);
+    border: 0.5px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.6;
+  }
+  .toolkit-method strong { color: #fff; font-weight: 500; }
+
+  .toolkit-body { max-width: 760px; margin: 0 auto; padding: 56px 28px 80px; }
+
+  /* category navigator pills */
+  .category-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 40px;
+    position: sticky;
+    top: 50px;
+    background: rgba(253, 252, 248, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 12px 0;
+    z-index: 20;
+    border-bottom: 0.5px solid var(--line);
+    margin-left: -28px;
+    margin-right: -28px;
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+  .cat-pill {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 0.5px solid var(--line-strong);
+    background: var(--card);
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .cat-pill:hover { background: var(--paper-warm); }
+
+  .toolkit-cat {
+    margin-bottom: 56px;
+    scroll-margin-top: 110px;
+  }
+  .toolkit-cat-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .toolkit-cat-icon {
+    font-size: 22px;
+  }
+  .toolkit-cat-name {
+    font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-size: 26px;
+    font-weight: 400;
+    margin: 0;
+    flex: 1;
+  }
+  .toolkit-cat-meta {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .toolkit-cat-blurb {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+    padding-bottom: 16px;
+    border-bottom: 0.5px solid var(--line);
+  }
+
+  .tool-card {
+    background: var(--card);
+    border: 0.5px solid var(--line);
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 12px;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .tool-card:hover {
+    border-color: var(--line-strong);
+    transform: translateY(-1px);
+  }
+  .tool-card.pick {
+    border-color: var(--purple);
+    background: linear-gradient(135deg, #fff 0%, var(--purple-soft) 200%);
+  }
+  .tool-card.pick::before {
+    content: 'JENNI PICK';
+    position: absolute;
+    top: -8px;
+    left: 16px;
+    background: var(--purple);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+  .tool-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .tool-name-block { flex: 1; }
+  .tool-name {
+    font-size: 17px;
+    font-weight: 500;
+    margin: 0 0 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tool-by { font-size: 12px; color: var(--ink-mute); }
+  .tool-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .tool-tag {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    background: var(--paper-warm);
+    color: var(--ink-soft);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+  }
+  .tool-tag.free { background: var(--teal-soft); color: var(--teal-ink); }
+  .tool-tag.paid { background: var(--amber-soft); color: var(--amber-ink); }
+  .tool-tag.freemium { background: var(--purple-soft); color: var(--purple-ink); }
+  .tool-link {
+    font-size: 12px;
+    color: var(--purple);
+    text-decoration: none;
+    margin-left: auto;
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+  .tool-link:hover { text-decoration: underline; }
+  .tool-desc {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+  .tool-good {
+    font-size: 13px;
+    line-height: 1.55;
+    padding: 10px 14px;
+    background: var(--paper-warm);
+    border-radius: 8px;
+    color: var(--ink-soft);
+  }
+  .tool-good strong { color: var(--ink); font-weight: 500; }
+  .tool-good em.clinical {
+    background: var(--teal-soft);
+    color: var(--teal-ink);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-style: normal;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .verdict-box {
+    background: var(--card);
+    border: 0.5px dashed var(--line-strong);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .verdict-box strong { color: var(--ink); font-weight: 500; }
+
+  .stack-block {
+    background: var(--terminal-bg);
+    color: var(--terminal-ink);
+    border-radius: 14px;
+    padding: 28px;
+    margin: 32px 0 24px;
+  }
+  .stack-block h3 {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 16px;
+    color: var(--terminal-green);
+    margin: 0 0 16px;
+    font-weight: 600;
+  }
+  .stack-row {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 0.5px solid var(--terminal-mute);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    flex-wrap: wrap;
+  }
+  .stack-row:last-child { border-bottom: none; }
+  .stack-task { color: var(--terminal-cyan); min-width: 180px; }
+  .stack-tool { color: var(--terminal-ink); flex: 1; }
+  .stack-tool b { color: var(--terminal-yellow); font-weight: 600; }
+
+  @media (max-width: 600px) {
+    .cover-progress-wrap { grid-template-columns: 1fr; }
+    .cover-stats { grid-template-columns: repeat(2, 1fr); }
+    .cover-stat:nth-child(2) { border-right: none; }
+    .cover-stat:nth-child(1), .cover-stat:nth-child(2) { border-bottom: 0.5px solid var(--line); }
+    .cover-title { font-size: 44px; }
+    .cover-shelves { grid-template-columns: repeat(2, 1fr); }
+    .cover-ornament { display: none; }
+    .codex-title, .toolkit-title { font-size: 32px; }
+    .stack-task { min-width: auto; width: 100%; }
+  }
+</style>
+
+<div class="topnav">
+  <span class="topnav-title" onclick="goto('cover')">Working Knowledge</span>
+  <span class="topnav-spacer"></span>
+  <button class="topnav-btn" id="navCover" onclick="goto('cover')">Cover</button>
+  <button class="topnav-btn" id="navToc" onclick="goto('toc')">Contents</button>
+  <button class="topnav-btn" id="navCodex" onclick="goto('codex')">Codex</button>
+  <button class="topnav-btn" id="navToolkit" onclick="goto('toolkit')">Toolkit</button>
+</div>
+
+<!-- ============= COVER ============= -->
+<div class="page active" id="page-cover">
+  <div class="cover">
+    <span class="cover-ornament tl">❦</span>
+    <span class="cover-ornament tr">❦</span>
+    <span class="cover-ornament bl">❦</span>
+    <span class="cover-ornament br">❦</span>
+    <div class="cover-inner">
+      <div class="cover-eyebrow">A self-directed AI curriculum<span>·</span>2026</div>
+      <h1 class="cover-title">Working <em>Knowledge</em></h1>
+      <p class="cover-subtitle">A clinician-builder's atlas of artificial intelligence —<br>conceptual fluency, not researcher depth.</p>
+      <div class="cover-author">
+        Tutored by Claude<strong>For Jenni · hospitalist · nephrologist · builder</strong>
+      </div>
+      <div class="cover-stats">
+        <div class="cover-stat"><div class="cover-stat-num" id="cstStreak">1</div><div class="cover-stat-label">Day streak</div></div>
+        <div class="cover-stat"><div class="cover-stat-num" id="cstSections">2</div><div class="cover-stat-label">Sections</div></div>
+        <div class="cover-stat"><div class="cover-stat-num" id="cstXp">250</div><div class="cover-stat-label">XP</div></div>
+        <div class="cover-stat"><div class="cover-stat-num" id="cstBadges">2</div><div class="cover-stat-label">Badges</div></div>
+      </div>
+      <div class="cover-progress-wrap">
+        <div class="cover-progress">
+          <div class="cover-progress-row"><strong>Foundations</strong><span id="cstFoundPct">18%</span></div>
+          <div class="cover-bar"><div class="cover-fill found" id="cstFoundBar" style="width: 18%;"></div></div>
+        </div>
+        <div class="cover-progress">
+          <div class="cover-progress-row"><strong>Clinical AI</strong><span id="cstClinPct">0%</span></div>
+          <div class="cover-bar"><div class="cover-fill clin" id="cstClinBar" style="width: 0%;"></div></div>
+        </div>
+      </div>
+
+      <div class="cover-shelves">
+        <button class="shelf" onclick="goto('toc')">
+          <div class="shelf-icon">📖</div>
+          <div class="shelf-name">Chapters</div>
+          <div class="shelf-sub">22 · 2 done</div>
+        </button>
+        <button class="shelf" onclick="goto('codex')">
+          <div class="shelf-icon">⌘</div>
+          <div class="shelf-name">Codex</div>
+          <div class="shelf-sub">Karpathy's wisdom</div>
+        </button>
+        <button class="shelf" onclick="goto('toolkit')">
+          <div class="shelf-icon">🧰</div>
+          <div class="shelf-name">Toolkit</div>
+          <div class="shelf-sub">My AI stack</div>
+        </button>
+        <button class="shelf" onclick="askClaude('Give me a quick 3-question mini-quiz on what I have learned so far.')">
+          <div class="shelf-icon">🎯</div>
+          <div class="shelf-name">Quiz</div>
+          <div class="shelf-sub">Self-check</div>
+        </button>
+      </div>
+
+      <button class="cover-cta" onclick="goto('toc')">Open the book →</button>
+      <button class="cover-secondary" onclick="resumeLast()">Resume where you left off</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============= TOC ============= -->
+<div class="page" id="page-toc">
+  <div class="wrap">
+    <div class="toc-header">
+      <div class="toc-eyebrow">Contents</div>
+      <h1 class="toc-title">The territory ahead</h1>
+      <p class="toc-summary">22 chapters across foundations, applied AI, and clinical AI. Tap any locked chapter to ask Claude to open it next.</p>
+    </div>
+
+    <button class="promo-banner codex" onclick="goto('codex')">
+      <div class="promo-icon">⌘</div>
+      <div class="promo-meta">
+        <div class="promo-eyebrow">$ open codex</div>
+        <div class="promo-title">The Karpathy Codex</div>
+        <div class="promo-sub">Quotes, frameworks, daily-use tips for working with AI</div>
+      </div>
+      <div class="promo-arrow">→</div>
+    </button>
+    <button class="promo-banner toolkit" onclick="goto('toolkit')">
+      <div class="promo-icon">🧰</div>
+      <div class="promo-meta">
+        <div class="promo-eyebrow">→ tool stack</div>
+        <div class="promo-title">The Toolkit</div>
+        <div class="promo-sub">Best-of-class AI tools, picked for a clinician-builder · April 2026</div>
+      </div>
+      <div class="promo-arrow">→</div>
+    </button>
+
+    <div class="part">
+      <div class="part-head">
+        <span class="part-num">Part I</span>
+        <h2 class="part-name">Foundations</h2>
+        <span class="part-meta">2 / 11 complete</span>
+      </div>
+      <button class="toc-row" onclick="goto('ch1')"><span class="toc-status done">●</span><span class="toc-num">i</span><span class="toc-label">The big-picture orientation</span><span class="toc-leader"></span><span class="toc-page">12</span></button>
+      <button class="toc-row featured" onclick="goto('ch2')"><span class="toc-status done">●</span><span class="toc-num">ii</span><span class="toc-label">Embeddings: meaning as geometry</span><span class="toc-leader"></span><span class="toc-page">26</span></button>
+      <button class="toc-row" onclick="askClaude('Start the chapter on the three flavors of ML.')"><span class="toc-status">○</span><span class="toc-num">iii</span><span class="toc-label">The three flavors of machine learning</span><span class="toc-leader"></span><span class="toc-page">44</span></button>
+      <button class="toc-row" onclick="askClaude('Start the chapter on neural networks intuitively.')"><span class="toc-status">○</span><span class="toc-num">v</span><span class="toc-label">Neural networks, intuitively</span><span class="toc-leader"></span><span class="toc-page">72</span></button>
+      <button class="toc-row" onclick="askClaude('Start the chapter on attention.')"><span class="toc-status">○</span><span class="toc-num">vii</span><span class="toc-label">Attention, the central mechanism</span><span class="toc-leader"></span><span class="toc-page">100</span></button>
+      <button class="toc-row" onclick="askClaude('Start the chapter on the transformer.')"><span class="toc-status">○</span><span class="toc-num">viii</span><span class="toc-label">The transformer, as a picture</span><span class="toc-leader"></span><span class="toc-page">116</span></button>
+    </div>
+
+    <div class="part">
+      <div class="part-head">
+        <span class="part-num">Part II</span>
+        <h2 class="part-name">Applied & agentic AI</h2>
+        <span class="part-meta">0 / 5 complete</span>
+      </div>
+      <button class="toc-row" onclick="askClaude('Start the chapter on RAG end-to-end.')"><span class="toc-status">○</span><span class="toc-num">xii</span><span class="toc-label">Retrieval-augmented generation, end-to-end</span><span class="toc-leader"></span><span class="toc-page">178</span></button>
+      <button class="toc-row" onclick="askClaude('Start the chapter on agents.')"><span class="toc-status">○</span><span class="toc-num">xiv</span><span class="toc-label">Tools, function calling, and what agents actually are</span><span class="toc-leader"></span><span class="toc-page">204</span></button>
+    </div>
+
+    <div class="part">
+      <div class="part-head">
+        <span class="part-num">Part III</span>
+        <h2 class="part-name">Clinical AI</h2>
+        <span class="part-meta">0 / 6 complete</span>
+      </div>
+      <button class="toc-row" onclick="askClaude('Start the clinical-bridge chapter.')"><span class="toc-status">○</span><span class="toc-num">xvii</span><span class="toc-label">Reading an ML-in-medicine paper</span><span class="toc-leader"></span><span class="toc-page">248</span></button>
+      <button class="toc-row" onclick="askClaude('Start the chapter on AI in nephrology.')"><span class="toc-status">○</span><span class="toc-num">xxi</span><span class="toc-label">AI in nephrology, specifically</span><span class="toc-leader"></span><span class="toc-page">310</span></button>
+    </div>
+
+    <div class="badge-wall">
+      <h3 class="badge-wall-title">Badge cabinet</h3>
+      <p class="badge-wall-sub">Earned milestones along the way</p>
+      <div class="badges-grid">
+        <div class="badge-tile earned"><span class="badge-tile-icon">🧭</span><div class="badge-tile-name">The map is not the territory</div></div>
+        <div class="badge-tile earned"><span class="badge-tile-icon">🧠</span><div class="badge-tile-name">Embeddings demystified</div></div>
+        <div class="badge-tile locked"><span class="badge-tile-icon">⌘</span><div class="badge-tile-name">Codex initiate</div></div>
+        <div class="badge-tile locked"><span class="badge-tile-icon">🧰</span><div class="badge-tile-name">Stack curator</div></div>
+        <div class="badge-tile locked"><span class="badge-tile-icon">⚡</span><div class="badge-tile-name">Transformer whisperer</div></div>
+        <div class="badge-tile locked"><span class="badge-tile-icon">📄</span><div class="badge-tile-name">First paper down</div></div>
+        <div class="badge-tile locked"><span class="badge-tile-icon">🩺</span><div class="badge-tile-name">Clinical bridge built</div></div>
+        <div class="badge-tile locked"><span class="badge-tile-icon">🔍</span><div class="badge-tile-name">RAG architect</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============= CODEX (abbreviated for size) ============= -->
+<div class="page codex-page" id="page-codex">
+  <div class="codex-hero">
+    <div class="codex-hero-inner">
+      <div class="codex-prompt">
+        <span class="pgreen">jenni@workingknowledge</span><span class="pyellow">:~/codex</span>$ <span class="pcyan">cat karpathy.md</span><span class="cursor"></span>
+      </div>
+      <h1 class="codex-title">The Karpathy <span class="accent">Codex</span></h1>
+      <p class="codex-subtitle">Andrej Karpathy on living with AI — quotes, frameworks, and concrete daily-use tips. The pedagogue you already admire, distilled into a working operating manual.</p>
+      <div class="codex-source">// curated from talks · X posts · 2023–2026 · honest about hype</div>
+    </div>
+  </div>
+
+  <div class="codex-body">
+    <div class="codex-section">
+      <div class="codex-section-head">
+        <span class="codex-section-num">## 01</span>
+        <h2 class="codex-section-name">The big ideas</h2>
+        <span class="codex-section-meta">3 quotes</span>
+      </div>
+      <div class="quote-card featured">
+        <div class="quote-text">"The hottest new programming language is English."</div>
+        <div class="quote-meta">
+          <span class="quote-tag">2023 · X</span>
+          <span class="quote-source">on natural language as the new interface</span>
+          <a class="quote-link" href="https://x.com/karpathy/status/1617979122625712128" target="_blank">source →</a>
+        </div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-text">"LLMs are a new kind of computer. They are a new operating system."</div>
+        <div class="quote-meta">
+          <span class="quote-tag">2024 · talk</span>
+          <span class="quote-source">Intro to LLMs</span>
+          <a class="quote-link" href="https://www.youtube.com/watch?v=zjkBMFhNj_g" target="_blank">talk →</a>
+        </div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-text">"It's not too bad for throwaway weekend projects, but still quite amusing."</div>
+        <div class="quote-meta">
+          <span class="quote-tag">2025 · X</span>
+          <span class="quote-source">the original vibe-coding tweet, often unread past the headline</span>
+          <a class="quote-link" href="https://x.com/karpathy/status/1886192184808149383" target="_blank">source →</a>
+        </div>
+      </div>
+      <div class="caveat-box">
+        <div class="caveat-label">⚠ Honest qualifier</div>
+        <p>In late 2025, Karpathy started preferring <strong>"agentic engineering"</strong> over "vibe coding" — emphasizing that orchestrating agents and exercising oversight is a real skill. Translation: don't shut your brain off when an LLM writes things for you. Especially in clinical contexts, the oversight <em>is</em> the work.</p>
+      </div>
+    </div>
+
+    <div class="codex-section">
+      <div class="codex-section-head">
+        <span class="codex-section-num">## 02</span>
+        <h2 class="codex-section-name">Frameworks</h2>
+        <span class="codex-section-meta">mental models</span>
+      </div>
+      <div class="framework-card terminal">
+        <div class="framework-eyebrow">// LLM as new OS</div>
+        <h3 class="framework-title">The model is the kernel</h3>
+        <div class="framework-body">
+          <p>The LLM is the kernel of a new kind of computer. The context window is RAM. Tools are peripherals. Files you upload are the filesystem. Your prompt is the shell command. When something doesn't work, you can <em>diagnose</em>: wrong context mounted, model confabulated because it lacked data, response slow because long context = lots to scan.</p>
+        </div>
+      </div>
+      <div class="framework-card">
+        <div class="framework-eyebrow">Software 1.0 / 2.0 / 3.0</div>
+        <h3 class="framework-title">Three eras of writing software</h3>
+        <div class="framework-body">
+          <p><strong>1.0</strong> — humans write explicit instructions in code. <strong>2.0</strong> — humans curate datasets and let neural nets learn the program. <strong>3.0</strong> — humans prompt foundation models in natural language.</p>
+          <p>Most real systems mix all three. Chalk Talk has 1.0 (the app shell), 2.0 (the embedding model), and 3.0 (the LLM doing synthesis). Naming the layers helps when you're debugging which one is misbehaving.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="codex-section">
+      <div class="codex-section-head">
+        <span class="codex-section-num">## 03</span>
+        <h2 class="codex-section-name">Daily-use playbook</h2>
+        <span class="codex-section-meta">tips</span>
+      </div>
+      <div class="tip-card">
+        <div class="tip-head">
+          <span class="tip-num">tip 01</span>
+          <span class="tip-title">Talk to it. Literally.</span>
+          <span class="tip-tag">workflow</span>
+        </div>
+        <div class="tip-body">
+          <p>Karpathy uses voice input (he uses SuperWhisper; <strong>Wispr Flow</strong> is the popular alternative) instead of typing. Speaking is 4–5x faster, and the prompts you produce are oddly more effective.</p>
+          <p><em class="clinical">Clinical use:</em> dictate a complicated patient story while walking between consults, then ask Claude to organize it into an A&P or draft a teaching point.</p>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-head">
+          <span class="tip-num">tip 02</span>
+          <span class="tip-title">Give it the relevant "files" up front</span>
+          <span class="tip-tag">context</span>
+        </div>
+        <div class="tip-body">
+          <p>Most disappointing outputs are not failures of intelligence — they're failures of context. <em class="clinical">For Chalk Talk:</em> this is literally what RAG does — pre-mounting the relevant guideline passage before the LLM answers.</p>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-head">
+          <span class="tip-num">tip 03</span>
+          <span class="tip-title">Build "throwaway" tools constantly</span>
+          <span class="tip-tag">building</span>
+        </div>
+        <div class="tip-body">
+          <p>Tiny custom software is now nearly free. Five years ago, a quick utility took a weekend. Now it's an evening. The Karpathy posture is to do this <em>constantly</em> — board prep quizzers, lab pattern scanners, notes templates. The cost of building falls; the bar for "is this worth making" should fall with it.</p>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-head">
+          <span class="tip-num">tip 04</span>
+          <span class="tip-title">Keep one hand on the wheel</span>
+          <span class="tip-tag">oversight</span>
+        </div>
+        <div class="tip-body">
+          <p>Vibe coding works for weekend projects; it's dangerous for systems you'll maintain. Even Karpathy hand-codes his serious work. <em class="clinical">In medicine this is doubly true:</em> a draft note from an ambient scribe is a draft. Your signature still means what it always meant.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="codex-section">
+      <div class="codex-section-head">
+        <span class="codex-section-num">## 04</span>
+        <h2 class="codex-section-name">The canon</h2>
+        <span class="codex-section-meta">watch · read</span>
+      </div>
+      <a class="resource-link" href="https://www.youtube.com/watch?v=zjkBMFhNj_g" target="_blank">
+        <div class="rl-meta">// 1hr · YouTube · the canonical talk</div>
+        <div class="rl-title">Intro to Large Language Models</div>
+        <div class="rl-desc">If you watch one Karpathy thing, watch this. Pictures-first walkthrough, highly NotebookLM-able.</div>
+      </a>
+      <a class="resource-link" href="https://x.com/karpathy" target="_blank">
+        <div class="rl-meta">// X</div>
+        <div class="rl-title">@karpathy on X</div>
+        <div class="rl-desc">Where most quotable phrases originate. Worth following for early-warning signal on the next discourse cycle.</div>
+      </a>
+    </div>
+
+    <div class="codex-section">
+      <div class="badge-reveal">
+        <div class="badge-icon">⌘</div>
+        <div class="badge-name">Codex initiate</div>
+        <div class="badge-flavor">+50 XP · you've absorbed the operating manual</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============= TOOLKIT ============= -->
+<div class="page toolkit-page" id="page-toolkit">
+  <div class="toolkit-hero">
+    <div class="toolkit-hero-inner">
+      <div class="toolkit-eyebrow">→ The Toolkit · April 2026</div>
+      <h1 class="toolkit-title">My AI <em>stack</em></h1>
+      <p class="toolkit-subtitle">A best-of-class survey of AI tools, picked for a clinician who builds — Chalk Talk, Ivrit Journey, and the rest of the working life around them.</p>
+      <div class="toolkit-method">
+        <strong>About this list.</strong> Objective on category-by-category quality (best-in-class for image, coding, vibe-coding, etc.) — and opinionated on which of those fits <em>you</em> specifically. Each category has the field plus a "Jenni pick" with reasoning. The landscape moves monthly; this is a snapshot, not a frozen truth.
+      </div>
+    </div>
+  </div>
+
+  <div class="toolkit-body">
+
+    <div class="category-pills">
+      <button class="cat-pill" onclick="scrollTo2('cat-chat')">Chat & reasoning</button>
+      <button class="cat-pill" onclick="scrollTo2('cat-coding')">Coding</button>
+      <button class="cat-pill" onclick="scrollTo2('cat-vibe')">Vibe coding</button>
+      <button class="cat-pill" onclick="scrollTo2('cat-image')">Images</button>
+      <button class="cat-pill" onclick="scrollTo2('cat-voice')">Voice & dictation</button>
+      <button class="cat-pill" onclick="scrollTo2('cat-research')">Research</button>
+      <button class="cat-pill" onclick="scrollTo2('cat-notes')">Notes & podcasts</button>
+      <button class="cat-pill" onclick="scrollTo2('cat-clinical')">Clinical-AI</button>
+      <button class="cat-pill" onclick="scrollTo2('stack')">Your stack</button>
+    </div>
+
+    <!-- CHAT & REASONING -->
+    <div class="toolkit-cat" id="cat-chat">
+      <div class="toolkit-cat-head">
+        <span class="toolkit-cat-icon">💬</span>
+        <h2 class="toolkit-cat-name">Chat & reasoning</h2>
+        <span class="toolkit-cat-meta">general-purpose</span>
+      </div>
+      <p class="toolkit-cat-blurb">Where most people meet AI. The frontier models leapfrog each other every few months; in April 2026, all three of the below are genuinely excellent and have meaningfully different personalities.</p>
+
+      <div class="tool-card pick">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">Claude</div>
+            <div class="tool-by">Anthropic</div>
+            <div class="tool-tags">
+              <span class="tool-tag freemium">freemium</span>
+              <span class="tool-tag">$20/mo Pro</span>
+              <span class="tool-tag">long-form</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://claude.ai" target="_blank">claude.ai →</a>
+        </div>
+        <div class="tool-desc">A frontier LLM with a strong reputation for nuanced reasoning, careful writing, and following long instructions faithfully — including custom instruction sets like the one running this very book. Excellent at clinical reasoning and at not over-confidently making things up.</div>
+        <div class="tool-good">
+          <strong>Why this is your daily driver:</strong> the pedagogical voice you've already calibrated this whole project around, plus Projects (custom instructions + knowledge bases) which is exactly what Working Knowledge runs on. <em class="clinical">For Chalk Talk:</em> Claude's careful instruction-following is the right baseline for a guideline-grounded clinical tool.
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">ChatGPT</div>
+            <div class="tool-by">OpenAI</div>
+            <div class="tool-tags">
+              <span class="tool-tag freemium">freemium</span>
+              <span class="tool-tag">$20/mo Plus</span>
+              <span class="tool-tag">multimodal</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://chatgpt.com" target="_blank">chatgpt.com →</a>
+        </div>
+        <div class="tool-desc">The default AI for most of the world, and rightly so. Strong on coding and math, fastest at multimodal (voice, vision, image gen all in one chat), and the GPT-5 reasoning models are top-tier on hard logic.</div>
+        <div class="tool-good">
+          <strong>When to reach for it:</strong> when you need image generation, voice mode, and chat in one app, or when you want a second opinion on something Claude said. The Voice mode specifically is the best in the field for hands-free conversation.
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">Gemini</div>
+            <div class="tool-by">Google DeepMind</div>
+            <div class="tool-tags">
+              <span class="tool-tag freemium">freemium</span>
+              <span class="tool-tag">$20/mo Pro</span>
+              <span class="tool-tag">long context</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://gemini.google.com" target="_blank">gemini.google.com →</a>
+        </div>
+        <div class="tool-desc">Gemini 3 is genuinely competitive at the frontier, with a unique advantage in very long context windows and tight integration with Google products (Gmail, Docs, Calendar). The image generation (Nano Banana Pro) is currently best-in-class.</div>
+        <div class="tool-good">
+          <strong>When to reach for it:</strong> when you need to feed in a very long document (100+ pages), or when you live in Gmail and want AI that actually knows your schedule and inbox.
+        </div>
+      </div>
+
+      <div class="verdict-box"><strong>Verdict:</strong> Run Claude as your primary, ChatGPT as your second opinion + voice, Gemini when you need long context or Google integration. All three free tiers are usable; pay for whichever one becomes your daily.</div>
+    </div>
+
+    <!-- CODING -->
+    <div class="toolkit-cat" id="cat-coding">
+      <div class="toolkit-cat-head">
+        <span class="toolkit-cat-icon">⌨️</span>
+        <h2 class="toolkit-cat-name">Coding (serious)</h2>
+        <span class="toolkit-cat-meta">for Chalk Talk, Ivrit Journey</span>
+      </div>
+      <p class="toolkit-cat-blurb">Tools where you're maintaining a codebase you care about. Different from vibe-coding, where you're building something throwaway. As of April 2026, the field is consolidating around these three.</p>
+
+      <div class="tool-card pick">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">Claude Code</div>
+            <div class="tool-by">Anthropic</div>
+            <div class="tool-tags">
+              <span class="tool-tag paid">$20+/mo</span>
+              <span class="tool-tag">terminal</span>
+              <span class="tool-tag">agentic</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://claude.ai/code" target="_blank">claude.ai/code →</a>
+        </div>
+        <div class="tool-desc">Terminal-native AI coding agent, currently the highest-ranked tool by serious developers (46% "most loved" in the Pragmatic Engineer's Feb 2026 survey, ~4% of all public GitHub commits). Excels at multi-file reasoning and large refactors. Up to 1M token context on Max tier.</div>
+        <div class="tool-good">
+          <strong>Why this is the pick:</strong> for Chalk Talk and Ivrit Journey, you need a tool that can hold the whole codebase in its head and iterate carefully. Claude Code's plan→edit→test→fix loop is the best in class for this. Lives in your terminal so it doesn't replace your editor — you stay in control.
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">Cursor</div>
+            <div class="tool-by">Anysphere</div>
+            <div class="tool-tags">
+              <span class="tool-tag paid">$20+/mo</span>
+              <span class="tool-tag">IDE</span>
+              <span class="tool-tag">multi-model</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://cursor.com" target="_blank">cursor.com →</a>
+        </div>
+        <div class="tool-desc">VS Code fork with AI woven into every keystroke. Fast Tab autocomplete, multi-file Composer mode, multi-model routing (Claude, GPT-5, Gemini, their own Composer). The best AI-native IDE, period.</div>
+        <div class="tool-good">
+          <strong>When to reach for it:</strong> if you prefer editor-first to terminal-first, or want to switch between models within a session. Many devs run <em>both</em> — Cursor for editing, Claude Code for autonomous tasks.
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">Codex (CLI)</div>
+            <div class="tool-by">OpenAI</div>
+            <div class="tool-tags">
+              <span class="tool-tag paid">paid</span>
+              <span class="tool-tag">cloud sandbox</span>
+              <span class="tool-tag">async</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://openai.com/codex" target="_blank">openai.com/codex →</a>
+        </div>
+        <div class="tool-desc">OpenAI's coding agent, recently passed 3M weekly users. Distinguishing feature: cloud sandbox model designed for asynchronous, long-running tasks that proceed without you watching. Now ships as a plugin inside Claude Code.</div>
+        <div class="tool-good">
+          <strong>When to reach for it:</strong> when you want to fire off a multi-hour refactor and check on it later. Less compelling as your daily driver than Claude Code or Cursor.
+        </div>
+      </div>
+
+      <div class="verdict-box"><strong>Verdict:</strong> Pick <strong>Claude Code</strong> as primary; add Cursor if you want IDE-style editing alongside. The whole field is converging — by next year these will all interoperate via plugins, and you'll mix and match.</div>
+    </div>
+
+    <!-- VIBE CODING -->
+    <div class="toolkit-cat" id="cat-vibe">
+      <div class="toolkit-cat-head">
+        <span class="toolkit-cat-icon">✨</span>
+        <h2 class="toolkit-cat-name">Vibe coding</h2>
+        <span class="toolkit-cat-meta">prompt → working app</span>
+      </div>
+      <p class="toolkit-cat-blurb">Tools designed for the Karpathy throwaway-weekend-project use case: describe what you want, get a working app, ship it without thinking too hard about the code. Very different from "serious coding" — the bar for production-readiness is lower; the bar for speed-of-iteration is higher.</p>
+
+      <div class="tool-card pick">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">Lovable</div>
+            <div class="tool-by">Lovable AB</div>
+            <div class="tool-tags">
+              <span class="tool-tag freemium">freemium</span>
+              <span class="tool-tag">$20+/mo</span>
+              <span class="tool-tag">full-stack</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://lovable.dev" target="_blank">lovable.dev →</a>
+        </div>
+        <div class="tool-desc">Type a description of the app you want, get a working full-stack app with frontend, backend, and database. The most polished of the prompt-to-app tools as of early 2026. Outputs are real code you can keep iterating on.</div>
+        <div class="tool-good">
+          <strong>Why this is the pick for you:</strong> you already have the builder instinct (Chalk Talk, Ivrit Journey didn't appear out of thin air). Lovable shortens the gap from <em>idea</em> to <em>working prototype</em> from a weekend to an hour. <em class="clinical">Use it for:</em> the next residency dashboard or board-prep quizzer that crosses your mind. Build it before the impulse fades.
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">Bolt</div>
+            <div class="tool-by">StackBlitz</div>
+            <div class="tool-tags">
+              <span class="tool-tag freemium">freemium</span>
+              <span class="tool-tag">browser</span>
+              <span class="tool-tag">live preview</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://bolt.new" target="_blank">bolt.new →</a>
+        </div>
+        <div class="tool-desc">Same general flavor as Lovable — prompt-to-app — but runs in-browser with instant live preview. Fast feedback loop, especially good for visual UI work.</div>
+        <div class="tool-good"><strong>When to reach for it:</strong> when you want to see something on screen in 30 seconds. Slightly less "real codebase" energy than Lovable, but faster to start.</div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">v0</div>
+            <div class="tool-by">Vercel</div>
+            <div class="tool-tags">
+              <span class="tool-tag freemium">freemium</span>
+              <span class="tool-tag">UI-focused</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://v0.dev" target="_blank">v0.dev →</a>
+        </div>
+        <div class="tool-desc">Generates React + Tailwind UI components from prompts. Narrower than Lovable/Bolt, but exceptional at the specific job of "make this UI look professional."</div>
+        <div class="tool-good"><strong>When to reach for it:</strong> when you have a working app but its UI looks like a 1998 form. Hand a screenshot to v0 and ask for a redesign.</div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">Replit Agent</div>
+            <div class="tool-by">Replit</div>
+            <div class="tool-tags">
+              <span class="tool-tag freemium">freemium</span>
+              <span class="tool-tag">deploys</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://replit.com" target="_blank">replit.com →</a>
+        </div>
+        <div class="tool-desc">Browser IDE with an agent that can build full apps and deploy them. Strong "ship it now" energy. (Note: had a high-profile incident in 2025 where the agent deleted a production database despite being told not to — caveat the autonomy.)</div>
+      </div>
+
+      <div class="verdict-box"><strong>Verdict:</strong> <strong>Lovable</strong> for new ideas, v0 for cleaning up UIs. The Karpathy oversight rule applies — vibe-code prototypes happily, but anything you'll maintain or rely on (Chalk Talk, Ivrit Journey) belongs in Claude Code or Cursor where you actually read the diffs.</div>
+    </div>
+
+    <!-- IMAGES -->
+    <div class="toolkit-cat" id="cat-image">
+      <div class="toolkit-cat-head">
+        <span class="toolkit-cat-icon">🎨</span>
+        <h2 class="toolkit-cat-name">Image generation</h2>
+        <span class="toolkit-cat-meta">creative & medical illustration</span>
+      </div>
+      <p class="toolkit-cat-blurb">The image-gen race has moved fast. As of April 2026, the leader is Google's Nano Banana Pro (yes, that's the actual name) on Gemini 3, with Midjourney still the choice for artistic/cinematic, and ChatGPT's GPT-image best-integrated for casual use.</p>
+
+      <div class="tool-card pick">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">Nano Banana Pro <span style="font-size:14px;">🍌</span></div>
+            <div class="tool-by">Google · Gemini 3 Pro Image</div>
+            <div class="tool-tags">
+              <span class="tool-tag freemium">freemium</span>
+              <span class="tool-tag">SOTA</span>
+              <span class="tool-tag">text-in-image</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://gemini.google.com" target="_blank">via Gemini →</a>
+        </div>
+        <div class="tool-desc">Google's flagship image model, built on Gemini 3. State-of-the-art on photorealism, infographics, and the historically hard problem of <em>legible text inside images</em>. Up to 4K, multi-language text rendering, search-grounded for factual visuals.</div>
+        <div class="tool-good">
+          <strong>Why this is the pick:</strong> you're a clinician-educator. The killer use case is generating <em class="clinical">infographics, diagrams, and teaching slides with accurate labels</em> — kidney anatomy with correctly spelled tubule names, drug-mechanism diagrams that don't hallucinate the molecule. Older models butchered text-in-image; this one doesn't.
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">GPT image generation</div>
+            <div class="tool-by">OpenAI · inside ChatGPT</div>
+            <div class="tool-tags">
+              <span class="tool-tag freemium">freemium</span>
+              <span class="tool-tag">conversational</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://chatgpt.com" target="_blank">chatgpt.com →</a>
+        </div>
+        <div class="tool-desc">ChatGPT's native image generation. Excellent at conversational iteration ("now make her wearing a stethoscope") because it shares context with the chat. Slightly behind Nano Banana on text-in-image but ahead on style consistency across edits.</div>
+        <div class="tool-good"><strong>When to reach for it:</strong> when you're already chatting and just need an image. Lowest friction.</div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">Midjourney</div>
+            <div class="tool-by">Midjourney Inc</div>
+            <div class="tool-tags">
+              <span class="tool-tag paid">$10+/mo</span>
+              <span class="tool-tag">artistic</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://midjourney.com" target="_blank">midjourney.com →</a>
+        </div>
+        <div class="tool-desc">Still the gold standard for cinematic, painterly, "wow that's beautiful" images. Less practical for diagrams or anything requiring text/realism, more about aesthetic excellence.</div>
+        <div class="tool-good"><strong>When to reach for it:</strong> book-cover-quality hero images, mood boards, conceptual art for a talk's title slide.</div>
+      </div>
+
+      <div class="verdict-box"><strong>Verdict:</strong> <strong>Nano Banana Pro</strong> for medical illustrations and slide graphics; ChatGPT image gen for casual one-offs. Skip Midjourney unless you're going for a specific aesthetic — for clinical work it's overkill.</div>
+    </div>
+
+    <!-- VOICE -->
+    <div class="toolkit-cat" id="cat-voice">
+      <div class="toolkit-cat-head">
+        <span class="toolkit-cat-icon">🎙️</span>
+        <h2 class="toolkit-cat-name">Voice & dictation</h2>
+        <span class="toolkit-cat-meta">talk to AI faster</span>
+      </div>
+      <p class="toolkit-cat-blurb">Karpathy's tip 01 in flesh: stop typing, start talking. Voice-to-text into AI is one of the highest-ROI workflow changes available right now.</p>
+
+      <div class="tool-card pick">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">Wispr Flow</div>
+            <div class="tool-by">Wispr</div>
+            <div class="tool-tags">
+              <span class="tool-tag freemium">freemium</span>
+              <span class="tool-tag">$15/mo Pro</span>
+              <span class="tool-tag">macOS/iOS</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://wisprflow.ai" target="_blank">wisprflow.ai →</a>
+        </div>
+        <div class="tool-desc">System-wide voice dictation that works in any text field — Slack, Claude, your EHR, anywhere. Holds for hold-to-talk, releases when you let go. Auto-formats and auto-punctuates. The current top choice for "I want to talk to my computer all day."</div>
+        <div class="tool-good">
+          <strong>Why this is the pick:</strong> 4-5x faster than typing for the kind of long, discursive prompts that get good answers from Claude. <em class="clinical">Clinical use:</em> dictate patient summaries between consults, then paste into AI for organization. Pairs beautifully with the Karpathy "talk to it" tip.
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">SuperWhisper</div>
+            <div class="tool-by">Superwhisper</div>
+            <div class="tool-tags">
+              <span class="tool-tag freemium">freemium</span>
+              <span class="tool-tag">macOS</span>
+              <span class="tool-tag">local mode</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://superwhisper.com" target="_blank">superwhisper.com →</a>
+        </div>
+        <div class="tool-desc">The tool Karpathy actually uses. Similar to Wispr Flow but with strong local/offline mode (transcription happens on your machine, not in the cloud) — meaningful for clinical dictation where privacy matters.</div>
+        <div class="tool-good"><strong>When to reach for it:</strong> if you want offline transcription, or if you find Wispr Flow's UX not quite right.</div>
+      </div>
+
+      <div class="verdict-box"><strong>Verdict:</strong> Try <strong>Wispr Flow</strong> first; the polish edge is real. Switch to SuperWhisper if local-only matters. Either way, install one this week — the workflow change is real.</div>
+    </div>
+
+    <!-- RESEARCH -->
+    <div class="toolkit-cat" id="cat-research">
+      <div class="toolkit-cat-head">
+        <span class="toolkit-cat-icon">🔍</span>
+        <h2 class="toolkit-cat-name">Research & search</h2>
+        <span class="toolkit-cat-meta">finding things, with citations</span>
+      </div>
+      <p class="toolkit-cat-blurb">When you want answers grounded in real, current sources — the way Google should have evolved.</p>
+
+      <div class="tool-card pick">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">Perplexity</div>
+            <div class="tool-by">Perplexity AI</div>
+            <div class="tool-tags">
+              <span class="tool-tag freemium">freemium</span>
+              <span class="tool-tag">$20/mo Pro</span>
+              <span class="tool-tag">cited</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://perplexity.ai" target="_blank">perplexity.ai →</a>
+        </div>
+        <div class="tool-desc">AI-native search engine. Every answer comes with numbered citations to specific sources. The Pro tier adds deep research mode (multi-step searches that take a few minutes and produce report-quality output).</div>
+        <div class="tool-good">
+          <strong>Why this is the pick:</strong> you have biostats-grade skepticism. Perplexity's citations let you verify before you trust. <em class="clinical">For clinical use:</em> "what is the current evidence for SGLT2 inhibitors in non-diabetic CKD" returns a synthesis with the actual papers cited, not vibes.
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">OpenEvidence</div>
+            <div class="tool-by">OpenEvidence</div>
+            <div class="tool-tags">
+              <span class="tool-tag free">free for clinicians</span>
+              <span class="tool-tag">medical only</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://openevidence.com" target="_blank">openevidence.com →</a>
+        </div>
+        <div class="tool-desc">Clinical-AI-specific search tool. Trained on and grounded in peer-reviewed medical literature only. Free for verified clinicians. Not a substitute for UpToDate but increasingly a first stop for "what does the latest evidence say."</div>
+        <div class="tool-good"><strong>When to reach for it:</strong> point-of-care clinical questions, especially when UpToDate feels slow or out-of-date on something fast-moving (e.g., new GLP-1 indications).</div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">Claude / ChatGPT Research mode</div>
+            <div class="tool-by">Anthropic / OpenAI</div>
+            <div class="tool-tags">
+              <span class="tool-tag paid">paid tier</span>
+              <span class="tool-tag">deep research</span>
+            </div>
+          </div>
+        </div>
+        <div class="tool-desc">Both have multi-step research modes that take 5-15 minutes and produce comprehensive reports with citations. The serious cousin of one-shot search. Useful for "give me the lay of the land on X" before reading any actual papers.</div>
+      </div>
+
+      <div class="verdict-box"><strong>Verdict:</strong> <strong>Perplexity</strong> as your default search-replacement; OpenEvidence for clinical-only questions; Claude/ChatGPT research mode when you'd otherwise spend an afternoon on PubMed.</div>
+    </div>
+
+    <!-- NOTES & PODCASTS -->
+    <div class="toolkit-cat" id="cat-notes">
+      <div class="toolkit-cat-head">
+        <span class="toolkit-cat-icon">📓</span>
+        <h2 class="toolkit-cat-name">Notes, podcasts, knowledge</h2>
+        <span class="toolkit-cat-meta">turning information into formats you'll consume</span>
+      </div>
+      <p class="toolkit-cat-blurb">The category that didn't exist three years ago — taking a stack of documents and turning them into something you'll actually engage with.</p>
+
+      <div class="tool-card pick">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">NotebookLM</div>
+            <div class="tool-by">Google</div>
+            <div class="tool-tags">
+              <span class="tool-tag free">free</span>
+              <span class="tool-tag">audio overview</span>
+              <span class="tool-tag">RAG built-in</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://notebooklm.google.com" target="_blank">notebooklm.google.com →</a>
+        </div>
+        <div class="tool-desc">Upload sources (papers, PDFs, web pages, YouTube videos), and NotebookLM gives you a chat grounded only in those sources, plus an "audio overview" — a two-host podcast-style discussion of your sources, generated in 5 minutes.</div>
+        <div class="tool-good">
+          <strong>Why this is the pick:</strong> your custom instructions specifically request NotebookLM-able sources. The audio overview turns Working Knowledge chapters or stacks of nephrology papers into 15-minute podcasts you can listen to on a walk or while Winston naps. <em class="clinical">Genuinely changes the relationship between you and the medical literature.</em>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">Granola</div>
+            <div class="tool-by">Granola</div>
+            <div class="tool-tags">
+              <span class="tool-tag freemium">freemium</span>
+              <span class="tool-tag">macOS</span>
+              <span class="tool-tag">meeting notes</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://granola.ai" target="_blank">granola.ai →</a>
+        </div>
+        <div class="tool-desc">AI meeting notes that listen in the background and give you formatted, actionable notes after the call. The current favorite among PMs and researchers; quietly excellent.</div>
+        <div class="tool-good"><strong>When to reach for it:</strong> any meeting where you'd otherwise scribble. Especially good for QI meetings, project syncs, the SF interview circuit you'll be doing.</div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">Obsidian + Smart Connections</div>
+            <div class="tool-by">community</div>
+            <div class="tool-tags">
+              <span class="tool-tag free">free</span>
+              <span class="tool-tag">local</span>
+              <span class="tool-tag">power-user</span>
+            </div>
+          </div>
+          <a class="tool-link" href="https://obsidian.md" target="_blank">obsidian.md →</a>
+        </div>
+        <div class="tool-desc">Local-first markdown note-taking. With the Smart Connections plugin, you get embedding-based "find related notes" inside your own vault. Real RAG over your own knowledge base.</div>
+        <div class="tool-good"><strong>When to reach for it:</strong> if you want a serious second brain. Steeper learning curve than Notion; more rewarding once you've climbed it. <em class="clinical">For Chalk Talk:</em> good place to draft the conceptual scaffolding before it becomes code.</div>
+      </div>
+
+      <div class="verdict-box"><strong>Verdict:</strong> <strong>NotebookLM</strong> is non-negotiable for this curriculum. Add Granola the next time you start a project where meetings matter.</div>
+    </div>
+
+    <!-- CLINICAL -->
+    <div class="toolkit-cat" id="cat-clinical">
+      <div class="toolkit-cat-head">
+        <span class="toolkit-cat-icon">🩺</span>
+        <h2 class="toolkit-cat-name">Clinical-AI tools</h2>
+        <span class="toolkit-cat-meta">tools made for medicine</span>
+      </div>
+      <p class="toolkit-cat-blurb">A short, deliberate list. The clinical-AI space is loud with hype; these are the ones that have actually shown up in real workflows by April 2026. We'll go deeper on each in the Clinical AI chapters.</p>
+
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">OpenEvidence</div>
+            <div class="tool-by">OpenEvidence</div>
+            <div class="tool-tags"><span class="tool-tag free">free for clinicians</span><span class="tool-tag">point-of-care</span></div>
+          </div>
+          <a class="tool-link" href="https://openevidence.com" target="_blank">openevidence.com →</a>
+        </div>
+        <div class="tool-desc">Already mentioned under research. The clinical-evidence-grounded LLM. Probably the single most-adopted clinical-AI tool in US hospitals by mid-2026.</div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">Abridge / Nuance DAX / Suki</div>
+            <div class="tool-by">various</div>
+            <div class="tool-tags"><span class="tool-tag paid">enterprise</span><span class="tool-tag">ambient scribe</span></div>
+          </div>
+        </div>
+        <div class="tool-desc">The ambient scribe category — listens in the room, drafts the note. Adoption has accelerated dramatically; most major health systems now have a contract. Quality varies by specialty and accent. Real impact on documentation burden, real risk of subtle errors propagating.</div>
+        <div class="tool-good"><strong>For you:</strong> watch which one your SF system rolls out, and treat it as a draft. We'll do a chapter on the actual evidence base.</div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-name-block">
+            <div class="tool-name">Glass Health / Pathway / DDx tools</div>
+            <div class="tool-by">various</div>
+            <div class="tool-tags"><span class="tool-tag freemium">freemium</span><span class="tool-tag">DDx assistance</span></div>
+          </div>
+          <a class="tool-link" href="https://glass.health" target="_blank">glass.health →</a>
+        </div>
+        <div class="tool-desc">LLM-based clinical reasoning assistants. Type a presentation, get a differential and workup. Useful for teaching residents (Chalk Talk-adjacent), more controversial in independent clinical decision-making.</div>
+      </div>
+
+      <div class="verdict-box"><strong>Verdict:</strong> <strong>OpenEvidence</strong> is genuinely useful right now. The rest of the category is moving fast — we'll go deep on the evidence in Part III chapters.</div>
+    </div>
+
+    <!-- YOUR STACK -->
+    <div class="toolkit-cat" id="stack">
+      <div class="stack-block">
+        <h3>// jenni's recommended stack · april 2026</h3>
+        <div class="stack-row"><span class="stack-task">// long-form thinking</span><span class="stack-tool"><b>Claude</b> (you're using it) · Pro tier</span></div>
+        <div class="stack-row"><span class="stack-task">// second opinion + voice</span><span class="stack-tool"><b>ChatGPT</b> · Plus tier</span></div>
+        <div class="stack-row"><span class="stack-task">// voice dictation</span><span class="stack-tool"><b>Wispr Flow</b> · install this week</span></div>
+        <div class="stack-row"><span class="stack-task">// serious coding</span><span class="stack-tool"><b>Claude Code</b> for Chalk Talk + Ivrit Journey</span></div>
+        <div class="stack-row"><span class="stack-task">// vibe coding</span><span class="stack-tool"><b>Lovable</b> for new ideas</span></div>
+        <div class="stack-row"><span class="stack-task">// images & infographics</span><span class="stack-tool"><b>Nano Banana Pro</b> via Gemini</span></div>
+        <div class="stack-row"><span class="stack-task">// research / search</span><span class="stack-tool"><b>Perplexity</b> Pro · default search</span></div>
+        <div class="stack-row"><span class="stack-task">// clinical evidence</span><span class="stack-tool"><b>OpenEvidence</b> · point-of-care</span></div>
+        <div class="stack-row"><span class="stack-task">// podcasts & learning</span><span class="stack-tool"><b>NotebookLM</b> · for this curriculum</span></div>
+        <div class="stack-row"><span class="stack-task">// meetings</span><span class="stack-tool"><b>Granola</b> · when projects need them</span></div>
+      </div>
+      <div class="badge-reveal">
+        <div class="badge-icon">🧰</div>
+        <div class="badge-name">Stack curator</div>
+        <div class="badge-flavor">+50 XP · you have an opinionated, current AI toolkit</div>
+      </div>
+      <p style="text-align: center; font-size: 13px; color: var(--ink-mute);">This page will go stale. Tell me to refresh it any time, or to add a tool you discover.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============= CHAPTERS (abbreviated) ============= -->
+<div class="page" id="page-ch1">
+  <div class="wrap">
+    <div class="chapter-frontispiece">
+      <div class="ch-num-line">Part I · Chapter i</div>
+      <h1 class="ch-title">The big-picture orientation</h1>
+      <p class="ch-subtitle">ML, deep learning, LLMs, and how they nest.</p>
+    </div>
+    <div class="step active">
+      <h2 class="ch-h2">Already complete ✓</h2>
+      <p>You completed this chapter. The key takeaway: AI ⊃ ML ⊃ deep learning ⊃ LLMs, nested dolls. Every LLM is a deep learning model trained as a transformer to predict the next token.</p>
+      <div class="callout teal">
+        <div class="callout-label">Badge earned</div>
+        <p>🧭 The map is not the territory · +100 XP</p>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn" onclick="goto('toc')">← Back to contents</button>
+      <button class="btn primary" onclick="goto('ch2')">Next chapter →</button>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-ch2">
+  <div class="wrap">
+    <div class="chapter-frontispiece">
+      <div class="ch-num-line">Part I · Chapter ii</div>
+      <h1 class="ch-title">Embeddings: meaning as geometry</h1>
+      <p class="ch-subtitle">The single most clarifying idea in modern AI.</p>
+    </div>
+    <div class="step active">
+      <h2 class="ch-h2">Already complete ✓</h2>
+      <p>You completed this chapter. The key takeaway: an embedding is a learned vector that represents meaning as a position in space. Similar things end up near each other; arithmetic on meanings becomes possible (king − man + woman ≈ queen). This is the substrate under semantic search, RAG, and every LLM's internal representations.</p>
+      <div class="callout teal">
+        <div class="callout-label">Badge earned</div>
+        <p>🧠 Embeddings demystified · +150 XP</p>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn" onclick="goto('ch1')">← Previous</button>
+      <button class="btn primary" onclick="goto('toc')">Back to contents →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const PAGES = ['cover', 'toc', 'codex', 'toolkit', 'ch1', 'ch2'];
+  function goto(name) {
+    PAGES.forEach(p => {
+      const el = document.getElementById('page-' + p);
+      if (el) el.classList.toggle('active', p === name);
+    });
+    document.getElementById('navCover').classList.toggle('cur', name === 'cover');
+    document.getElementById('navToc').classList.toggle('cur', name === 'toc' || name.startsWith('ch'));
+    document.getElementById('navCodex').classList.toggle('cur', name === 'codex');
+    document.getElementById('navToolkit').classList.toggle('cur', name === 'toolkit');
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    if (PAGES.includes(name) && name !== 'cover') saveLast(name);
+  }
+  function resumeLast() {
+    const last = localStorage.getItem('gt:lastPage') || 'toc';
+    goto(PAGES.includes(last) ? last : 'toc');
+  }
+  function saveLast(p) { try { localStorage.setItem('gt:lastPage', p); } catch(e){} }
+  function askClaude(text) {
+    if (typeof window.sendPrompt === 'function') window.sendPrompt(text);
+    else {
+      try {
+        navigator.clipboard.writeText(text);
+        toast('Prompt copied — paste in chat');
+      } catch(e) { alert('Tell Claude: ' + text); }
+    }
+  }
+  function toast(msg) {
+    const note = document.createElement('div');
+    note.textContent = msg;
+    note.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;z-index:1000;';
+    document.body.appendChild(note);
+    setTimeout(() => note.remove(), 2200);
+  }
+  function scrollTo2(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  async function loadCoverState() {
+    if (!window.storage) return;
+    try {
+      const stored = await window.storage.get('ground-truth:state');
+      if (!stored || !stored.value) return;
+      const s = JSON.parse(stored.value);
+      if (s.streak) document.getElementById('cstStreak').textContent = s.streak;
+      if (s.sectionsCompleted) document.getElementById('cstSections').textContent = s.sectionsCompleted.length;
+      if (s.xp) document.getElementById('cstXp').textContent = s.xp.toLocaleString();
+      if (s.badges) document.getElementById('cstBadges').textContent = s.badges.length;
+      if (s.foundationsPct != null) {
+        document.getElementById('cstFoundPct').textContent = Math.round(s.foundationsPct) + '%';
+        document.getElementById('cstFoundBar').style.width = Math.round(s.foundationsPct) + '%';
+      }
+      if (s.clinicalPct != null) {
+        document.getElementById('cstClinPct').textContent = Math.round(s.clinicalPct) + '%';
+        document.getElementById('cstClinBar').style.width = Math.max(2, Math.round(s.clinicalPct)) + '%';
+      }
+    } catch(e) {}
+  }
+  loadCoverState();
+</script>
