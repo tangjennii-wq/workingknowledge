@@ -2505,6 +2505,161 @@
     .check-title { font-size: 32px; }
   }
 
+  /* ==================== LISTEN PANEL ====================
+     v8: per-chapter TTS + NotebookLM source pack. */
+  .listen-panel {
+    background: var(--card);
+    border: 0.5px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin: 18px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .listen-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .listen-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute);
+    font-weight: 500;
+    min-width: 56px;
+    flex-shrink: 0;
+  }
+  .listen-btn {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 7px 13px;
+    border-radius: 999px;
+    border: 0.5px solid var(--line-strong);
+    background: var(--card);
+    color: var(--ink);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+  .listen-btn:hover { background: var(--paper-warm); }
+  .listen-btn.primary {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+  }
+  .listen-btn.primary:hover { background: #000; }
+  .listen-btn.playing {
+    background: var(--coral);
+    border-color: var(--coral);
+    color: #fff;
+  }
+  .listen-btn.playing:hover { background: var(--coral-ink); }
+  .listen-btn .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: listen-pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes listen-pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+  .listen-meta {
+    font-size: 11px;
+    color: var(--ink-mute);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  .listen-progress-bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 999px;
+    overflow: hidden;
+    min-width: 80px;
+  }
+  .listen-progress-fill {
+    height: 100%;
+    background: var(--coral);
+    border-radius: 999px;
+    width: 0%;
+    transition: width 0.3s linear;
+  }
+  .listen-divider {
+    height: 0.5px;
+    background: var(--line);
+    margin: 2px 0;
+  }
+  .listen-podcast {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .listen-podcast-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .listen-podcast-blurb {
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    flex: 1;
+    min-width: 200px;
+  }
+  .listen-podcast-blurb strong { font-weight: 500; color: var(--ink); }
+  .listen-sources {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: var(--paper-warm);
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  .listen-source {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px;
+    font-size: 11px;
+    color: var(--ink);
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.15s;
+  }
+  .listen-source:hover { background: rgba(255,255,255,0.6); }
+  .listen-source-num {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    color: var(--ink-mute);
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+  .listen-source-title { flex: 1; }
+  .listen-voice-select {
+    font-family: inherit;
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 0.5px solid var(--line-strong);
+    background: var(--card);
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+
+  @media (max-width: 720px) {
+    .listen-panel { padding: 13px 14px; gap: 10px; }
+    .listen-label { min-width: auto; }
+    .listen-row { gap: 8px; }
+    .listen-btn { font-size: 11px; padding: 6px 11px; }
+    .listen-podcast-blurb { font-size: 11px; }
+  }
+
   /* ==================== NO-SCROLL DASHBOARD ====================
      v7 pass: cover page fits in viewport, no scroll required on desktop.
      Grid layout: top bar / middle 2-column grid / bottom tile nav. */
@@ -4788,6 +4943,41 @@ Draft:
       <span id="ch1Time">~6 min</span>
     </div>
 
+    <div class="listen-panel" data-chapter="ch1">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch1">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these into NotebookLM and click "Generate audio overview" — you'll have a 12-min two-host conversation in ~5 minutes.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://www.deeplearning.ai/the-batch/" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">The Batch (deeplearning.ai) — overview newsletter</span>
+          </a>
+          <a class="listen-source" href="https://en.wikipedia.org/wiki/Machine_learning" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">Wikipedia: Machine learning — solid baseline definitions</span>
+          </a>
+          <a class="listen-source" href="https://www.youtube.com/watch?v=zjkBMFhNj_g" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">Karpathy — Intro to Large Language Models (1hr talk)</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
     <div class="step active" data-ch1-step="1">
       <h2 class="ch-h2">A nesting doll, not a list</h2>
       <p>Most explanations of AI throw a pile of acronyms at you. Forget that. The right mental picture is four nested dolls.</p>
@@ -4864,6 +5054,41 @@ Draft:
       <span class="step-counter" id="ch2Counter">1 / 7</span>
       <div class="bar"><div class="fill" id="ch2Fill" style="width: 14%;"></div></div>
       <span id="ch2Time">~12 min</span>
+    </div>
+
+    <div class="listen-panel" data-chapter="ch2">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch2">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these into NotebookLM and click "Generate audio overview" — paired well in a ~15 min two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://jalammar.github.io/illustrated-word2vec/" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">Jay Alammar — The Illustrated Word2Vec (canonical visual explainer)</span>
+          </a>
+          <a class="listen-source" href="https://simonwillison.net/2023/Oct/23/embeddings/" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">Simon Willison — Embeddings: what they are and why they matter</span>
+          </a>
+          <a class="listen-source" href="https://platform.openai.com/docs/guides/embeddings" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">OpenAI Embeddings docs — practitioner reference</span>
+          </a>
+        </div>
+      </div>
     </div>
 
     <div class="step active" data-ch2-step="1">
@@ -5013,6 +5238,41 @@ Draft:
       <h1 class="outline-title">The three flavors of machine learning</h1>
       <p class="outline-subtitle">Supervised, unsupervised, reinforcement — and why most clinical ML is one specific kind.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch3">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch3">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://en.wikipedia.org/wiki/Supervised_learning" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">Wikipedia: Supervised learning</span>
+          </a>
+          <a class="listen-source" href="https://en.wikipedia.org/wiki/Unsupervised_learning" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">Wikipedia: Unsupervised learning</span>
+          </a>
+          <a class="listen-source" href="https://en.wikipedia.org/wiki/Reinforcement_learning" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">Wikipedia: Reinforcement learning</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -5071,6 +5331,41 @@ Draft:
       <h1 class="outline-title">Loss, training, and the shape of generalization</h1>
       <p class="outline-subtitle">How a model learns from being wrong — and why "fits the training data" is a trap.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch4">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch4">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://en.wikipedia.org/wiki/Loss_function" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">Wikipedia: Loss function</span>
+          </a>
+          <a class="listen-source" href="https://en.wikipedia.org/wiki/Overfitting" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">Wikipedia: Overfitting</span>
+          </a>
+          <a class="listen-source" href="https://www.deeplearningbook.org/contents/ml.html" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">Deep Learning Book — ML basics chapter</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -5129,6 +5424,41 @@ Draft:
       <h1 class="outline-title">Neural networks, intuitively</h1>
       <p class="outline-subtitle">Stacks of simple matrix math that, somehow, learn to see and reason.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch5">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch5">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://playground.tensorflow.org/" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">TensorFlow Playground (interactive NN intuition)</span>
+          </a>
+          <a class="listen-source" href="https://en.wikipedia.org/wiki/Deep_learning" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">Wikipedia: Deep learning</span>
+          </a>
+          <a class="listen-source" href="https://distill.pub/" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">Distill — visual ML explainers</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -5187,6 +5517,41 @@ Draft:
       <h1 class="outline-title">Tokenization, the unglamorous workhorse</h1>
       <p class="outline-subtitle">How LLMs chop text into the units they actually process — and why this seemingly boring step keeps biting people.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch6">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch6">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://platform.openai.com/tokenizer" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">OpenAI Tokenizer — try it</span>
+          </a>
+          <a class="listen-source" href="https://en.wikipedia.org/wiki/Byte_pair_encoding" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">Wikipedia: Byte-pair encoding (BPE)</span>
+          </a>
+          <a class="listen-source" href="https://huggingface.co/learn/nlp-course/chapter6/1" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">HF NLP Course — Tokenizers</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -5244,6 +5609,41 @@ Draft:
       <h1 class="outline-title">Attention, the central mechanism</h1>
       <p class="outline-subtitle">The trick that made transformers possible — and the closest thing modern AI has to a "thinking" step.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch7">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch7">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://jalammar.github.io/illustrated-transformer/" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">Jay Alammar — The Illustrated Transformer</span>
+          </a>
+          <a class="listen-source" href="https://arxiv.org/abs/1706.03762" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">Attention Is All You Need (original paper)</span>
+          </a>
+          <a class="listen-source" href="https://en.wikipedia.org/wiki/Attention_(machine_learning)" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">Wikipedia: Attention</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -5302,6 +5702,41 @@ Draft:
       <h1 class="outline-title">The transformer, as a picture</h1>
       <p class="outline-subtitle">The architecture that ate AI — explained as a diagram, not equations.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch8">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch8">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://jalammar.github.io/illustrated-transformer/" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">Jay Alammar — The Illustrated Transformer</span>
+          </a>
+          <a class="listen-source" href="https://www.youtube.com/watch?v=zjkBMFhNj_g" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">Karpathy — Intro to LLMs (covers transformer)</span>
+          </a>
+          <a class="listen-source" href="https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">Wikipedia: Transformer</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -5359,6 +5794,41 @@ Draft:
       <h1 class="outline-title">Context, cache, and the economics of inference</h1>
       <p class="outline-subtitle">Why long conversations get expensive, slow down, and eventually forget.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch9">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch9">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://huggingface.co/blog/optimize-llm" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">HF — Optimizing LLM inference</span>
+          </a>
+          <a class="listen-source" href="https://en.wikipedia.org/wiki/Large_language_model" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">Wikipedia: LLM (context, inference)</span>
+          </a>
+          <a class="listen-source" href="https://www.anthropic.com/news/prompt-caching" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">Anthropic — Prompt caching</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -5416,6 +5886,41 @@ Draft:
       <h1 class="outline-title">How models get trained</h1>
       <p class="outline-subtitle">Pretraining → SFT → RLHF → modern RL. The recipe behind frontier AI.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch10">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch10">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://www.anthropic.com/research/constitutional-ai-harmlessness-from-ai-feedback" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">Anthropic — Constitutional AI</span>
+          </a>
+          <a class="listen-source" href="https://huggingface.co/blog/rlhf" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">HF — RLHF explained</span>
+          </a>
+          <a class="listen-source" href="https://openai.com/research/learning-from-human-preferences" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">OpenAI — Learning from human preferences</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -5473,6 +5978,41 @@ Draft:
       <h1 class="outline-title">Reasoning, chain of thought, and test-time compute</h1>
       <p class="outline-subtitle">The newest superpower: models that think longer to answer harder.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch11">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch11">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://arxiv.org/abs/2201.11903" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">Chain-of-Thought Prompting (Wei et al.)</span>
+          </a>
+          <a class="listen-source" href="https://openai.com/index/learning-to-reason-with-llms/" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">OpenAI — Learning to reason with LLMs</span>
+          </a>
+          <a class="listen-source" href="https://www.anthropic.com/news/claude-3-5-sonnet" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">Anthropic — model family overview</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -5531,6 +6071,41 @@ Draft:
       <h1 class="outline-title">Retrieval-augmented generation, end-to-end</h1>
       <p class="outline-subtitle">The architecture inside Chalk Talk and most "grounded in guidelines" clinical AI.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch12">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch12">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://www.anthropic.com/news/contextual-retrieval" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">Anthropic — Contextual retrieval</span>
+          </a>
+          <a class="listen-source" href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">Wikipedia: RAG</span>
+          </a>
+          <a class="listen-source" href="https://docs.llamaindex.ai/en/stable/getting_started/concepts/" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">LlamaIndex — RAG concepts</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -5588,6 +6163,41 @@ Draft:
       <h1 class="outline-title">RAG, long context, fine-tuning: which when</h1>
       <p class="outline-subtitle">Three ways to teach a model your data — and when each is the right tool.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch13">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch13">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://www.anthropic.com/news/contextual-retrieval" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">Anthropic — Contextual retrieval</span>
+          </a>
+          <a class="listen-source" href="https://platform.openai.com/docs/guides/fine-tuning" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">OpenAI — Fine-tuning guide</span>
+          </a>
+          <a class="listen-source" href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">Anthropic — Long-context patterns</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -5645,6 +6255,41 @@ Draft:
       <h1 class="outline-title">Tools, function calling, and what agents actually are</h1>
       <p class="outline-subtitle">Demystifying the buzzword. An "agent" is an LLM in a loop with permission to do things.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch14">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch14">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://www.anthropic.com/research/building-effective-agents" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">Anthropic — Building effective agents</span>
+          </a>
+          <a class="listen-source" href="https://platform.openai.com/docs/guides/function-calling" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">OpenAI — Function calling guide</span>
+          </a>
+          <a class="listen-source" href="https://en.wikipedia.org/wiki/Intelligent_agent" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">Wikipedia: Intelligent agent</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -5702,6 +6347,41 @@ Draft:
       <h1 class="outline-title">A field guide to prompting</h1>
       <p class="outline-subtitle">Few-shot, chain of thought, ReAct, self-consistency. The named techniques and when each helps.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch15">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch15">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">Anthropic — Prompt engineering guide</span>
+          </a>
+          <a class="listen-source" href="https://platform.openai.com/docs/guides/prompt-engineering" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">OpenAI — Prompt engineering</span>
+          </a>
+          <a class="listen-source" href="https://www.promptingguide.ai/" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">Prompting Guide — community resource</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -5759,6 +6439,41 @@ Draft:
       <h1 class="outline-title">MCP and the agentic plumbing</h1>
       <p class="outline-subtitle">Model Context Protocol — the standard that lets any LLM talk to any tool.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch16">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch16">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://modelcontextprotocol.io/" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">Model Context Protocol — official docs</span>
+          </a>
+          <a class="listen-source" href="https://www.anthropic.com/news/model-context-protocol" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">Anthropic — MCP announcement</span>
+          </a>
+          <a class="listen-source" href="https://github.com/modelcontextprotocol/servers" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">MCP servers — examples</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -5815,6 +6530,41 @@ Draft:
       <h1 class="outline-title">Reading an ML-in-medicine paper</h1>
       <p class="outline-subtitle">Critical appraisal for the clinician with biostats literacy and AI fluency.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch17">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch17">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://www.tripod-statement.org/" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">TRIPOD-AI — reporting guideline for clinical AI</span>
+          </a>
+          <a class="listen-source" href="https://www.bmj.com/content/368/bmj.m441" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">BMJ — How to read an ML paper</span>
+          </a>
+          <a class="listen-source" href="https://www.nature.com/articles/s41591-020-1041-y" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">Nature Med — minimum reporting standards</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -5873,6 +6623,41 @@ Draft:
       <h1 class="outline-title">The FDA, SaMD, and the regulatory map</h1>
       <p class="outline-subtitle">How clinical AI gets cleared, regulated, and (sometimes) escapes regulation.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch18">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch18">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://www.fda.gov/medical-devices/software-medical-device-samd" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">FDA — Software as Medical Device</span>
+          </a>
+          <a class="listen-source" href="https://www.fda.gov/medical-devices/software-medical-device-samd/artificial-intelligence-and-machine-learning-aiml-enabled-medical-devices" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">FDA — AI/ML enabled devices list</span>
+          </a>
+          <a class="listen-source" href="https://www.fda.gov/medical-devices/digital-health-center-excellence/clinical-decision-support-software" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">FDA — CDS software guidance</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -5930,6 +6715,41 @@ Draft:
       <h1 class="outline-title">Bias and equity in clinical algorithms</h1>
       <p class="outline-subtitle">Where AI inherits structural bias — and what to do about it.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch19">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch19">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://www.science.org/doi/10.1126/science.aax2342" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">Obermeyer et al. — Dissecting racial bias in algorithms</span>
+          </a>
+          <a class="listen-source" href="https://www.nejm.org/doi/full/10.1056/NEJMms2004740" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">NEJM — Hidden in plain sight (race-based clinical algorithms)</span>
+          </a>
+          <a class="listen-source" href="https://www.kidney.org/news/removing-race-from-estimates-kidney-function" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">NKF — Removing race from eGFR</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -5987,6 +6807,41 @@ Draft:
       <h1 class="outline-title">Ambient scribes: hype, evidence, and reality</h1>
       <p class="outline-subtitle">The fastest-deployed clinical AI category — and what we actually know about it.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch20">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch20">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://catalyst.nejm.org/doi/full/10.1056/CAT.23.0404" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">NEJM Catalyst — Ambient AI scribe outcomes</span>
+          </a>
+          <a class="listen-source" href="https://www.abridge.com/research" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">Abridge — research page</span>
+          </a>
+          <a class="listen-source" href="https://www.nuance.com/healthcare/dragon-ai-clinical-solutions/dax-copilot.html" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">Nuance DAX Copilot — vendor info</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -6044,6 +6899,41 @@ Draft:
       <h1 class="outline-title">AI in nephrology, specifically</h1>
       <p class="outline-subtitle">A field guide for your own subspecialty — what's deployed, what's promising, what's hype.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch21">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch21">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://www.kidney-international.org/" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">Kidney International — current journal</span>
+          </a>
+          <a class="listen-source" href="https://www.kidney.org/news/removing-race-from-estimates-kidney-function" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">NKF — Removing race from eGFR</span>
+          </a>
+          <a class="listen-source" href="https://cjasn.asnjournals.org/" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">CJASN — clinical journal of nephrology</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -6100,6 +6990,41 @@ Draft:
       <h1 class="outline-title">The pilot-to-production gap</h1>
       <p class="outline-subtitle">Why most clinical AI dies between the demo and the deployment.</p>
     </div>
+    <div class="listen-panel" data-chapter="ch22">
+      <div class="listen-row">
+        <span class="listen-label">Listen</span>
+        <button class="listen-btn primary" data-listen="ch22">
+          <span class="listen-btn-text">▶ Read aloud</span>
+        </button>
+        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
+        <span class="listen-meta listen-time">browser TTS</span>
+      </div>
+      <div class="listen-divider"></div>
+      <div class="listen-podcast">
+        <div class="listen-podcast-row">
+          <span class="listen-label">Podcast</span>
+          <div class="listen-podcast-blurb">
+            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
+          </div>
+          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
+        </div>
+        <div class="listen-sources">
+          <a class="listen-source" href="https://hai.stanford.edu/research" target="_blank">
+            <span class="listen-source-num">01</span>
+            <span class="listen-source-title">Stanford HAI — clinical AI deployment research</span>
+          </a>
+          <a class="listen-source" href="https://www.nature.com/articles/s41591-020-1041-y" target="_blank">
+            <span class="listen-source-num">02</span>
+            <span class="listen-source-title">Nature Med — minimum reporting / monitoring</span>
+          </a>
+          <a class="listen-source" href="https://www.tripod-statement.org/" target="_blank">
+            <span class="listen-source-num">03</span>
+            <span class="listen-source-title">TRIPOD-AI — full pipeline checklist</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
 
     <div class="outline-section-label">The chapter in one paragraph</div>
     <div class="outline-card">
@@ -7135,6 +8060,204 @@ Draft:
       si.addEventListener('keydown', searchKeyHandler);
     }
   }, 100);
+
+  // ============= TEXT-TO-SPEECH ENGINE =============
+  // Reads chapter content aloud using the browser's built-in speechSynthesis.
+  // Voice quality varies by OS — best on iOS Safari, decent on macOS, ok on Chrome.
+  // We extract readable text from the chapter container, skip UI chrome.
+  const tts = {
+    utterance: null,
+    activeChapter: null,
+    paused: false,
+    progressTimer: null,
+    startTime: 0,
+    estimatedDuration: 0,
+  };
+
+  function getChapterReadableText(chapterId) {
+    // Find the chapter page
+    const page = document.getElementById('page-' + chapterId);
+    if (!page) return '';
+    // Collect text from chapter content, skipping listen-panel itself + nav buttons
+    const skipSelectors = ['.listen-panel', '.nav', '.outline-cta', '.outline-secondary-actions', 'button.btn', '.completed-banner', '.progress-row', '.outline-tag-row'];
+    const skipNodes = new Set();
+    skipSelectors.forEach(sel => {
+      page.querySelectorAll(sel).forEach(n => skipNodes.add(n));
+    });
+    // Walk the page DOM and collect text from elements that aren't in skip set
+    const collected = [];
+    function walk(node) {
+      if (skipNodes.has(node)) return;
+      if (node.nodeType === 3) {
+        const t = node.textContent.trim();
+        if (t) collected.push(t);
+        return;
+      }
+      if (node.nodeType !== 1) return;
+      // Skip elements inside skip-list
+      for (const skip of skipNodes) {
+        if (skip.contains(node)) return;
+      }
+      // Heading: add a small pause before
+      if (/^H[1-6]$/.test(node.tagName)) {
+        const t = node.textContent.trim();
+        if (t) collected.push('. ' + t + '. ');
+        return;
+      }
+      // P, li, etc. — descend
+      for (const child of node.childNodes) walk(child);
+      if (['P', 'LI', 'DIV'].includes(node.tagName)) collected.push(' ');
+    }
+    walk(page);
+    return collected.join(' ').replace(/\s+/g, ' ').trim();
+  }
+
+  function ttsToggle(chapterId) {
+    if (!('speechSynthesis' in window)) {
+      toast('Text-to-speech not supported in this browser');
+      return;
+    }
+    // If currently playing this chapter → pause/resume
+    if (tts.activeChapter === chapterId && speechSynthesis.speaking) {
+      if (tts.paused) {
+        speechSynthesis.resume();
+        tts.paused = false;
+        updateTTSButton(chapterId, 'playing');
+      } else {
+        speechSynthesis.pause();
+        tts.paused = true;
+        updateTTSButton(chapterId, 'paused');
+      }
+      return;
+    }
+    // If something else is playing → stop it
+    if (speechSynthesis.speaking) {
+      ttsStop();
+    }
+    // Start fresh on this chapter
+    const text = getChapterReadableText(chapterId);
+    if (!text) {
+      toast('Nothing to read in this chapter yet');
+      return;
+    }
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+    utterance.volume = 1.0;
+    // Pick a good default voice — prefer Samantha (iOS/Mac), Google US English, or first English voice
+    const voices = speechSynthesis.getVoices();
+    const preferredOrder = ['Samantha', 'Google US English', 'Microsoft Zira', 'Alex', 'Karen'];
+    let chosen = null;
+    for (const name of preferredOrder) {
+      chosen = voices.find(v => v.name.includes(name));
+      if (chosen) break;
+    }
+    if (!chosen) chosen = voices.find(v => v.lang && v.lang.startsWith('en'));
+    if (chosen) utterance.voice = chosen;
+    utterance.onstart = () => {
+      tts.startTime = Date.now();
+      // Estimate ~150 words/min, ~5 chars/word → roughly 750 chars/min → 12.5 chars/sec
+      tts.estimatedDuration = (text.length / 12.5) * 1000;
+      startProgressTimer(chapterId);
+    };
+    utterance.onend = () => {
+      tts.activeChapter = null;
+      tts.paused = false;
+      stopProgressTimer();
+      updateTTSButton(chapterId, 'idle');
+      setProgressFill(chapterId, 100);
+      setTimeout(() => setProgressFill(chapterId, 0), 600);
+    };
+    utterance.onerror = () => {
+      tts.activeChapter = null;
+      tts.paused = false;
+      stopProgressTimer();
+      updateTTSButton(chapterId, 'idle');
+    };
+    tts.utterance = utterance;
+    tts.activeChapter = chapterId;
+    tts.paused = false;
+    speechSynthesis.speak(utterance);
+    updateTTSButton(chapterId, 'playing');
+  }
+
+  function ttsStop() {
+    speechSynthesis.cancel();
+    if (tts.activeChapter) updateTTSButton(tts.activeChapter, 'idle');
+    tts.activeChapter = null;
+    tts.paused = false;
+    stopProgressTimer();
+  }
+
+  function updateTTSButton(chapterId, state) {
+    const btn = document.querySelector('[data-listen="' + chapterId + '"]');
+    if (!btn) return;
+    const textEl = btn.querySelector('.listen-btn-text');
+    btn.classList.remove('playing', 'paused');
+    if (state === 'playing') {
+      btn.classList.add('playing');
+      if (textEl) textEl.innerHTML = '<span class="dot"></span>&nbsp;Pause';
+    } else if (state === 'paused') {
+      btn.classList.add('paused');
+      if (textEl) textEl.textContent = '▶ Resume';
+    } else {
+      if (textEl) textEl.textContent = '▶ Read aloud';
+    }
+  }
+
+  function startProgressTimer(chapterId) {
+    stopProgressTimer();
+    tts.progressTimer = setInterval(() => {
+      if (!tts.activeChapter || tts.paused) return;
+      const elapsed = Date.now() - tts.startTime;
+      const pct = Math.min(99, (elapsed / tts.estimatedDuration) * 100);
+      setProgressFill(chapterId, pct);
+      // also update the time meta
+      const total = Math.round(tts.estimatedDuration / 1000);
+      const cur = Math.round(elapsed / 1000);
+      const fmt = (s) => Math.floor(s/60) + ':' + String(s%60).padStart(2, '0');
+      const panel = document.querySelector('.listen-panel[data-chapter="' + chapterId + '"]');
+      if (panel) {
+        const meta = panel.querySelector('.listen-time');
+        if (meta) meta.textContent = fmt(cur) + ' / ~' + fmt(total);
+      }
+    }, 500);
+  }
+  function stopProgressTimer() {
+    if (tts.progressTimer) {
+      clearInterval(tts.progressTimer);
+      tts.progressTimer = null;
+    }
+  }
+  function setProgressFill(chapterId, pct) {
+    const panel = document.querySelector('.listen-panel[data-chapter="' + chapterId + '"]');
+    if (!panel) return;
+    const fill = panel.querySelector('.listen-progress-fill');
+    if (fill) fill.style.width = pct + '%';
+  }
+
+  // Wire up all listen buttons
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-listen]');
+    if (!btn) return;
+    const chapterId = btn.getAttribute('data-listen');
+    ttsToggle(chapterId);
+  });
+
+  // Stop TTS when navigating away from a chapter
+  const _origGoto = goto;
+  goto = function(name) {
+    if (tts.activeChapter && tts.activeChapter !== name) {
+      ttsStop();
+    }
+    _origGoto(name);
+  };
+
+  // Voices load asynchronously in some browsers — trigger load
+  if ('speechSynthesis' in window) {
+    speechSynthesis.getVoices();
+    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+  }
 
   // ============= BOOTSTRAP =============
   // Cover is active by default; flag the body so the no-scroll layout kicks in.
