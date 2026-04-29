@@ -5854,16 +5854,23 @@ Draft:
 <!-- ============= OUTLINE CHAPTERS (3-22) ============= -->
 
 <!-- CH 3: three flavors of ML -->
-<div class="page outline-page" id="page-ch3">
-  <div class="outline-wrap">
-    <div class="outline-tag-row">
-      <span class="outline-tag foundations">Foundations</span>
-      <span class="outline-tag preview">Outline · click "Read full" for full chapter</span>
+<div class="page" id="page-ch3">
+  <div class="wrap">
+    <div class="chapter-frontispiece">
+      <div class="ch-num-line">Part I · Chapter iii</div>
+      <h1 class="ch-title">The three flavors of machine learning</h1>
+      <p class="ch-subtitle">Supervised, unsupervised, reinforcement — three feedback regimes, and why almost all clinical ML is one specific kind.</p>
     </div>
-    <div class="outline-frontispiece">
-      <div class="outline-num-line">Part I · Chapter iii</div>
-      <h1 class="outline-title">The three flavors of machine learning</h1>
-      <p class="outline-subtitle">Supervised, unsupervised, reinforcement — and why most clinical ML is one specific kind.</p>
+
+    <div class="completed-banner" id="ch3Completed" style="display:none;">
+      <span class="completed-banner-icon">✓</span>
+      <div><strong>You've completed this chapter.</strong> Re-read it any time — your progress and badge stay safe.</div>
+    </div>
+
+    <div class="progress-row">
+      <span class="step-counter" id="ch3Counter">1 / 7</span>
+      <div class="bar"><div class="fill" id="ch3Fill" style="width: 14%;"></div></div>
+      <span id="ch3Time">~4 min</span>
     </div>
     <div class="listen-panel" data-chapter="ch3">
       <div class="listen-row">
@@ -5901,182 +5908,274 @@ Draft:
     </div>
 
 
-    <div class="outline-section-label">The chapter in one paragraph</div>
-    <div class="outline-card">
-      <p>ML splits into three flavors by what kind of feedback the system gets. <strong>Supervised</strong>: you give the model labeled examples ("this X-ray = pneumonia, this one = normal") and it learns to predict the label. Almost all clinical ML lives here. <strong>Unsupervised</strong>: no labels — the model finds structure on its own (clustering, dimension reduction, anomaly detection). <strong>Reinforcement</strong>: the model takes actions and gets rewards over time, like a chess engine or a self-driving car. Modern LLMs use <em>all three</em> at different stages, which is part of why they're so capable.</p>
-    </div>
-
-    <div class="outline-section-label">Key takeaways</div>
-    <div class="outline-card takeaway">
-      <div class="outline-card-label">★ What sticks</div>
-      <ul>
-        <li><strong>Supervised learning needs labels</strong>, and labels are expensive — this is why "we have a million chest X-rays" matters less than "we have a million <em>labeled</em> chest X-rays."</li>
-        <li><strong>Unsupervised learning finds patterns you didn't know to look for</strong> — phenotype discovery, patient clustering, novelty detection.</li>
-        <li><strong>Reinforcement learning shines when good behavior is hard to specify but easy to recognize</strong> — "this game state is winning" rather than "make this exact move."</li>
-        <li><strong>LLM training is a stack:</strong> pretraining (unsupervised next-token prediction), supervised fine-tuning (labeled examples of good responses), and reinforcement learning from human feedback (RLHF — graded by humans).</li>
-      </ul>
-    </div>
-
-    <div class="outline-section-label">Metaphors that help it click</div>
-    <div class="outline-card metaphors">
-      <div class="outline-card-label">⌘ Two ways to feel it</div>
-      <div class="metaphor-row clinical">
-        <div class="metaphor-icon">⚕</div>
-        <div class="metaphor-body"><strong>Clinical:</strong> <em>Supervised</em> is teaching residents with cases that already have a known diagnosis — you point at the X-ray and say "this is pneumonia, this is pulmonary edema." <em>Unsupervised</em> is walking onto a new ward and noticing that several patients seem to cluster together before anyone tells you what they have. <em>Reinforcement</em> is a med student learning to write notes — every shift, the attending grades it, and the writing slowly converges on something readable.</div>
+    <div class="step active" data-ch3-step="1">
+      <h2 class="ch-h2">The split, in one move</h2>
+      <p>ML divides into three flavors by what kind of feedback the model gets while it learns. That single difference — <em>what does the model get told?</em> — drives everything else: what data you need, what tasks it can do, what failure modes show up.</p>
+      <p>The three:</p>
+      <div class="callout teal">
+        <div class="callout-label">★ The three regimes</div>
+        <p><strong>Supervised:</strong> labeled examples. "This X-ray is pneumonia. This one is normal." The model learns to predict the label.</p>
+        <p><strong>Unsupervised:</strong> no labels. The model finds structure in the data on its own — clusters, anomalies, low-dimensional summaries.</p>
+        <p><strong>Reinforcement:</strong> actions plus rewards over time. The model takes a step, gets a score, adjusts. Like a chess engine or a self-driving car.</p>
       </div>
-      <div class="metaphor-row daily">
-        <div class="metaphor-icon">☕</div>
-        <div class="metaphor-body"><strong>Daily:</strong> Supervised = Anki flashcards (the answer is on the back). Unsupervised = sorting your overflowing closet into piles by feel — no one told you the categories. Reinforcement = learning to parallel park: trial, scrape, adjust, repeat, the satisfying click of being aligned.</div>
+      <p>Almost all <em>clinical</em> ML is supervised. Most <em>headline</em> AI (large language models, AlphaGo, robotics) uses all three at different stages.</p>
+    </div>
+
+    <div class="step" data-ch3-step="2">
+      <h2 class="ch-h2">Supervised — the workhorse</h2>
+      <p>You hand the model a stack of paired examples: input and label. <em>Input</em> = a chest X-ray, a vector of EHR features, a sentence. <em>Label</em> = pneumonia/normal, AKI within 48h yes/no, "positive"/"negative" sentiment. The model fits a function from input → label, then you evaluate it on examples it hasn't seen.</p>
+      <p>This is where every clinical risk score, every imaging classifier, every ambient-scribe summary-grader lives. It's also where the entire validity of a paper depends on one quiet detail: <strong>how was the label defined?</strong></p>
+      <div class="callout">
+        <div class="callout-label">The label is the ceiling</div>
+        <p>If your "AKI" label was defined by ICD-10 codes pulled from billing, the model is predicting <em>billing behavior</em>, not kidney injury. If it was defined by KDIGO criteria from adjudicated chart review, you're predicting actual AKI. Same model architecture, completely different things being learned.</p>
+      </div>
+      <div class="callout amber">
+        <div class="callout-label">⚕ The clinical translation</div>
+        <p>"We have a million chest X-rays" is much less interesting than "we have a million <em>radiologist-labeled</em> chest X-rays." The bottleneck in clinical AI is almost never raw data. It's the cost of high-quality labels.</p>
       </div>
     </div>
 
-    <div class="outline-section-label">The clinical hook</div>
-    <div class="outline-card clinical">
-      <div class="outline-card-label">⚕ Why a nephrologist should care</div>
-      <p>When you read "we trained a deep learning model to predict AKI," that's <em>supervised</em> learning — and the entire validity of the paper depends on how AKI was labeled. KDIGO criteria? ICD codes? Trained adjudicators? The labels are the ceiling on what the model can learn.</p>
-      <p>When a vendor pitches "AI that discovers patient phenotypes," that's <em>unsupervised</em> — and the failure mode is finding statistical patterns that don't map to anything clinically meaningful.</p>
-    </div>
-
-    <div class="outline-section-label">Connects to</div>
-    <div class="outline-card connects">
-      <div class="outline-card-label">↳ Other chapters</div>
-      <ul>
-        <li><strong>Chapter iv</strong> — once you have a flavor, the next question is "what's the loss function?"</li>
-        <li><strong>Chapter x</strong> — modern LLM training stacks all three flavors</li>
-        <li><strong>Chapter xvii</strong> — the critical-appraisal lens for ML papers starts here</li>
-      </ul>
-    </div>
-
-    <div class="outline-cta">
-      <h3>Read the full chapter?</h3>
-      <p>Multi-step lesson with clinical examples and a quick exercise.</p>
-      <button class="outline-cta-btn" onclick="askClaude('Write the full chapter iii — three flavors of machine learning. Build it as the full multi-step interactive version like chapters i and ii.')">Read full chapter →</button>
-      <div class="outline-secondary-actions">
-        <button class="outline-secondary-btn" onclick="goto('toc')">Back to contents</button>
-        <button class="outline-secondary-btn" onclick="goto('ch4')">Next outline →</button>
+    <div class="step" data-ch3-step="3">
+      <h2 class="ch-h2">Unsupervised — finding structure you didn't ask for</h2>
+      <p>You give the model the data, no labels, and ask: "what's in here?" The output is structure — natural clusters, low-dimensional summaries, points that don't fit. Three flavors of the flavor:</p>
+      <div class="callout teal">
+        <div class="callout-label">Three things unsupervised does well</div>
+        <p><strong>Clustering:</strong> "These 10,000 patients fall into 6 groups based on lab patterns." Useful for phenotype discovery — finding subtypes you didn't know existed.</p>
+        <p><strong>Dimension reduction:</strong> "I can describe this 200-feature patient with 3 numbers." Useful for visualization and for compressing input before doing anything else.</p>
+        <p><strong>Anomaly detection:</strong> "This patient doesn't look like any other patient." Useful for flagging novel presentations or detecting documentation errors.</p>
       </div>
+      <div class="callout amber">
+        <div class="callout-label">The unsupervised failure mode</div>
+        <p>Without labels to anchor the model, it will happily find statistical clusters that don't map to anything clinically meaningful. A "phenotype" the algorithm discovered might just be "patients admitted on weekends" or "patients seen by Dr. Smith." The math doesn't know — you do.</p>
+      </div>
+      <p>This is why "AI that discovers patient phenotypes" is a category to look at carefully. The discovery is real; the meaning is not guaranteed.</p>
+    </div>
+
+    <div class="step" data-ch3-step="4">
+      <h2 class="ch-h2">Reinforcement — when the right answer is hard to write down</h2>
+      <p>Reinforcement learning (RL) is for when you can't easily say "this is the right move" but you <em>can</em> say "this game state is winning" or "this trajectory is bad." The model takes actions in an environment, gets a reward signal, and updates toward actions that lead to higher reward over time.</p>
+      <p>This is how chess engines became superhuman. It's also how robots learn to walk and how self-driving cars learn to merge — domains where labeling every action is impossible but the long-run reward is recognizable.</p>
+      <div class="callout">
+        <div class="callout-label">Why RL matters for clinical AI (even if it's not deployed yet)</div>
+        <p>RL is what makes modern LLMs feel polite, careful, and helpful. The "human feedback" stage of RLHF (reinforcement learning from human feedback) trains the model to prefer responses humans grade as good. It's how Claude learned not to be rude. There's research interest in RL for treatment-recommendation systems, but at the clinical sharp end RL is largely <em>aspirational</em> — the reward functions are too easy to game and the consequences of a bad action are too high.</p>
+      </div>
+    </div>
+
+    <div class="step" data-ch3-step="5">
+      <h2 class="ch-h2">The training stack of a modern LLM uses all three</h2>
+      <p>This is the surprise that explains why LLMs feel different from "old" ML: a modern LLM is built using all three flavors, in sequence.</p>
+      <div class="callout teal">
+        <div class="callout-label">★ The three-stage training stack</div>
+        <p><strong>Stage 1 — Pretraining (unsupervised):</strong> Feed the model trillions of words from the internet. Train it to predict the next token. No human labels involved.</p>
+        <p><strong>Stage 2 — Supervised fine-tuning (SFT):</strong> Show it tens of thousands of high-quality examples of "good response to a prompt." This is the manners course.</p>
+        <p><strong>Stage 3 — RLHF / RLAIF:</strong> Have humans (or another AI) grade pairs of responses; train a reward model on those preferences; use RL to optimize the LLM to score high on the reward model. This is what tunes voice, helpfulness, and refusal behavior.</p>
+      </div>
+      <p>Each stage adds a different capability. Pretraining gives raw knowledge. SFT teaches it to respond to instructions. RLHF teaches it to prefer responses humans like.</p>
+      <p>When you hear that a clinical LLM has been "fine-tuned on medical data," the first question is: <em>which stage?</em> A model fine-tuned at the SFT stage on doctor-written responses behaves differently from one RLHF'd by clinician evaluators.</p>
+    </div>
+
+    <div class="step" data-ch3-step="6">
+      <h2 class="ch-h2">The flavor-to-paper map</h2>
+      <p>Reading clinical AI literature gets much easier once you can identify the flavor in the first paragraph of the methods section.</p>
+      <div class="callout">
+        <div class="callout-label">Spotting the flavor in 30 seconds</div>
+        <p><strong>Supervised:</strong> "We trained a model to predict X." X is a label. There's an outcome you can score against.</p>
+        <p><strong>Unsupervised:</strong> "We identified X clusters / phenotypes / latent features." No outcome — discovery is the point.</p>
+        <p><strong>Reinforcement:</strong> "We trained an agent to maximize reward." Rare in clinical literature; common in robotics and gaming.</p>
+        <p><strong>Mixed (modern LLM):</strong> "We pretrained on a clinical corpus, fine-tuned on annotated dialogues, and applied RLHF using clinician evaluations."</p>
+      </div>
+      <div class="callout amber">
+        <div class="callout-label">⚕ The questions to ask, by flavor</div>
+        <p>For <strong>supervised</strong>: how was the label defined, who labeled it, was the test set really separate?</p>
+        <p>For <strong>unsupervised</strong>: do the discovered groups correspond to anything clinically meaningful, or are they artifacts of documentation and workflow?</p>
+        <p>For a <strong>mixed-stack LLM</strong>: which stages used clinical data, with what evaluators, and what behaviors did each stage tune?</p>
+      </div>
+    </div>
+
+    <div class="step" data-ch3-step="7">
+      <h2 class="ch-h2">The small win</h2>
+      <p>You can now read the methods section of a clinical AI paper and instantly classify what kind of system it is — and that classification carries with it the right set of skeptical questions.</p>
+      <p>This is the conceptual scaffolding for everything that follows. Loss functions (next chapter), evaluation, validation, deployment — they all branch by flavor.</p>
+      <div class="badge-reveal">
+        <div class="badge-icon">🎚️</div>
+        <div class="badge-name">Flavor chooser</div>
+        <div class="badge-flavor">+120 XP · you can name the regime in 30 seconds</div>
+      </div>
+
+      <h3 class="ch-h3">Worth keeping handy</h3>
+      <a class="resource-link ch" href="https://en.wikipedia.org/wiki/Supervised_learning" target="_blank">
+        <div class="rl-title">Wikipedia: Supervised learning</div>
+        <div class="rl-desc">Solid baseline reference; surprisingly well-written for the foundational definitions.</div>
+      </a>
+      <a class="resource-link ch" href="https://www.deeplearning.ai/the-batch/" target="_blank">
+        <div class="rl-title">The Batch (deeplearning.ai)</div>
+        <div class="rl-desc">Andrew Ng's weekly digest — good for staying current on which flavor is hot for which task.</div>
+      </a>
+    </div>
+
+    <div class="nav">
+      <button class="btn" id="ch3Prev" disabled>← Back</button>
+      <button class="btn primary" id="ch3Next">Continue →</button>
     </div>
   </div>
 </div>
 
 <!-- CH 4: loss & training -->
-<div class="page outline-page" id="page-ch4">
-  <div class="outline-wrap">
-    <div class="outline-tag-row">
-      <span class="outline-tag foundations">Foundations</span>
-      <span class="outline-tag preview">Outline</span>
+<div class="page" id="page-ch4">
+  <div class="wrap">
+    <div class="chapter-frontispiece">
+      <div class="ch-num-line">Part I · Chapter iv</div>
+      <h1 class="ch-title">Loss, training, and the shape of generalization</h1>
+      <p class="ch-subtitle">How a model learns from being wrong — and why "fits the training data" is a trap.</p>
     </div>
-    <div class="outline-frontispiece">
-      <div class="outline-num-line">Part I · Chapter iv</div>
-      <h1 class="outline-title">Loss, training, and the shape of generalization</h1>
-      <p class="outline-subtitle">How a model learns from being wrong — and why "fits the training data" is a trap.</p>
+
+    <div class="completed-banner" id="ch4Completed" style="display:none;">
+      <span class="completed-banner-icon">✓</span>
+      <div><strong>You've completed this chapter.</strong> Re-read it any time — your progress and badge stay safe.</div>
     </div>
-    <div class="listen-panel" data-chapter="ch4">
-      <div class="listen-row">
-        <span class="listen-label">Listen</span>
-        <button class="listen-btn primary" data-listen="ch4">
-          <span class="listen-btn-text">▶ Read aloud</span>
-        </button>
-        <div class="listen-progress-bar"><div class="listen-progress-fill"></div></div>
-        <span class="listen-meta listen-time">browser TTS</span>
+
+    <div class="progress-row">
+      <span class="step-counter" id="ch4Counter">1 / 7</span>
+      <div class="bar"><div class="fill" id="ch4Fill" style="width: 14%;"></div></div>
+      <span id="ch4Time">~4 min</span>
+    </div>
+
+    <div class="step active" data-ch4-step="1">
+      <h2 class="ch-h2">What "training" actually means</h2>
+      <p>Strip away the mystique and training is one loop, repeated millions of times:</p>
+      <div class="callout">
+        <div class="callout-label">The loop</div>
+        <p>1. Show the model an input. <br>2. Get its prediction. <br>3. Compare prediction to truth → produce a number called the <strong>loss</strong>. <br>4. Nudge the parameters to make the loss a little smaller. <br>5. Repeat.</p>
       </div>
-      <div class="listen-divider"></div>
-      <div class="listen-podcast">
-        <div class="listen-podcast-row">
-          <span class="listen-label">Podcast</span>
-          <div class="listen-podcast-blurb">
-            <strong>Want a real podcast?</strong> Drop these sources into NotebookLM and click "Generate audio overview" for a two-host conversation.
-          </div>
-          <button class="listen-btn" onclick="window.open('https://notebooklm.google.com/', '_blank')">Open NotebookLM →</button>
-        </div>
-        <div class="listen-sources">
-          <a class="listen-source" href="https://en.wikipedia.org/wiki/Loss_function" target="_blank">
-            <span class="listen-source-num">01</span>
-            <span class="listen-source-title">Wikipedia: Loss function</span>
-          </a>
-          <a class="listen-source" href="https://en.wikipedia.org/wiki/Overfitting" target="_blank">
-            <span class="listen-source-num">02</span>
-            <span class="listen-source-title">Wikipedia: Overfitting</span>
-          </a>
-          <a class="listen-source" href="https://www.deeplearningbook.org/contents/ml.html" target="_blank">
-            <span class="listen-source-num">03</span>
-            <span class="listen-source-title">Deep Learning Book — ML basics chapter</span>
-          </a>
-        </div>
+      <p>That's it. Every neural network, every gradient-boosted tree, every logistic regression — they all do this. The differences are in the model architecture (step 1) and how loss is computed (step 3). The fundamental loop is invariant.</p>
+      <p>Calling this "the model learns" is a metaphor. What's actually happening is parameter values are creeping toward configurations that produce smaller numbers. The "learning" is emergent — it's what we call the result.</p>
+    </div>
+
+    <div class="step" data-ch4-step="2">
+      <h2 class="ch-h2">Loss — a number for "how wrong"</h2>
+      <p>The loss function is the model's <em>error signal</em>. It takes a prediction and the truth and returns a number that's bigger when the prediction is worse and smaller when it's better. Different problems use different losses:</p>
+      <div class="callout teal">
+        <div class="callout-label">★ Two losses you'll see in clinical papers</div>
+        <p><strong>Cross-entropy loss (classification):</strong> for predict-the-category problems (pneumonia y/n, AKI within 48h y/n). Penalizes confident wrong answers much more than hesitant ones. The right thing to use when the model outputs probabilities.</p>
+        <p><strong>Mean squared error (regression):</strong> for predict-a-number problems (length of stay, predicted creatinine). Penalizes big misses quadratically — being off by 4 is 16x worse than being off by 1.</p>
+      </div>
+      <div class="callout amber">
+        <div class="callout-label">⚕ Why the choice of loss matters</div>
+        <p>If you're predicting AKI risk and you use a standard cross-entropy loss, the model "treats" all errors symmetrically — a missed AKI is the same loss as a false alarm. But clinically, a missed AKI may be much more harmful than a false alarm (or vice versa, depending on alert fatigue). <strong>Class-weighted</strong> or <strong>focal</strong> losses can encode this asymmetry. When a paper buries the loss-function choice, it's worth digging out — it tells you what kind of error the authors decided to tolerate.</p>
       </div>
     </div>
 
-
-    <div class="outline-section-label">The chapter in one paragraph</div>
-    <div class="outline-card">
-      <p>A model "learns" by repeatedly making predictions, comparing them to the truth using a <strong>loss function</strong> (a number that measures how wrong it was), and nudging its parameters to reduce that loss. The whole process is gradient descent — find which way to move the parameters to make the loss smaller, take a step, repeat. The catch: a model that gets perfect loss on the training set may have <em>memorized</em> rather than <em>learned</em>. The skill we actually want is <strong>generalization</strong> — performing well on data the model has never seen — and that's what overfitting destroys.</p>
-    </div>
-
-    <div class="outline-section-label">Key takeaways</div>
-    <div class="outline-card takeaway">
-      <div class="outline-card-label">★ What sticks</div>
-      <ul>
-        <li><strong>Loss is the model's error signal.</strong> Different problems use different losses (cross-entropy for classification, mean-squared-error for regression).</li>
-        <li><strong>Training = "make the loss go down."</strong> That's it. Mechanically uninteresting; conceptually load-bearing.</li>
-        <li><strong>Overfitting is memorization disguised as learning.</strong> Train AUC of 0.99, test AUC of 0.65 = you built a recall machine, not a generalizer.</li>
-        <li><strong>The train/validation/test split is sacred.</strong> If your model has ever "seen" the test set during training or tuning, your numbers lie.</li>
-      </ul>
-    </div>
-
-    <div class="outline-section-label">Metaphors that help it click</div>
-    <div class="outline-card metaphors">
-      <div class="outline-card-label">⌘ Two ways to feel it</div>
-      <div class="metaphor-row clinical">
-        <div class="metaphor-icon">⚕</div>
-        <div class="metaphor-body"><strong>Clinical:</strong> <em>Loss</em> is the gap between your initial diagnosis and the actual one — converted to a number. <em>Training</em> is grand rounds where every miss costs you and the next case adjusts your priors. <em>Generalization</em> is the difference between acing Step 1 from the answer key versus walking in on a real patient you've never seen. <strong>Overfitting</strong> is the resident who memorized ten review articles and freezes on the atypical presentation; <strong>generalizing</strong> is the attending who rolls with anything because the underlying biology actually clicked.</div>
+    <div class="step" data-ch4-step="3">
+      <h2 class="ch-h2">Gradient descent — how the model nudges itself</h2>
+      <p>"Make the loss smaller" is easy to say. The hard part is: <em>which way</em> should we move each of the model's millions of parameters? Gradient descent answers this with calculus.</p>
+      <p>The <strong>gradient</strong> is the multivariate slope of the loss with respect to each parameter — it tells you, for every parameter, "if you increase me by a tiny amount, the loss will go up/down by this much." You compute the gradient, you take a small step in the opposite direction, you re-evaluate, you repeat.</p>
+      <div class="callout">
+        <div class="callout-label">The hill metaphor</div>
+        <p>Imagine the loss surface as a landscape with the model's parameters as coordinates and the loss as elevation. The model is standing somewhere on a hill. It feels which way is downhill (the gradient) and takes a step that direction (with some learning rate controlling the step size). Repeat. Eventually it settles into a valley — a local minimum where loss can't get much smaller in any direction. That's a "trained" model.</p>
       </div>
-      <div class="metaphor-row daily">
-        <div class="metaphor-icon">☕</div>
-        <div class="metaphor-body"><strong>Daily:</strong> <em>Loss</em> is the distance from your golf ball to the hole — each swing gives you a number, and you adjust grip, stance, club. <em>Overfitting</em> is studying only one practice test's answer key — you ace it, then bomb the real exam because you memorized answers, not concepts. <em>Generalization</em> is your grandmother's knife skills — she can dice an onion she has never seen because the skill, not the answer, is what's stored.</div>
+      <div class="callout amber">
+        <div class="callout-label">A wrinkle that matters</div>
+        <p>The loss surface for a deep network has billions of parameters and is wildly non-convex — there are many valleys, some shallower than others. Modern deep learning gets away with this by using stochastic gradient descent (SGD) with random batches plus various momentum tricks. The empirical surprise is that <em>most</em> valleys it finds are good enough.</p>
       </div>
     </div>
 
-    <div class="outline-section-label">The clinical hook</div>
-    <div class="outline-card clinical">
-      <div class="outline-card-label">⚕ Why a nephrologist should care</div>
-      <p>This is where most clinical AI quietly fails. A model trained on UCSF data can hit AUC 0.95 on a UCSF held-out set and still collapse to 0.7 at NYU — the embeddings, the documentation patterns, even the <em>physicians' habits</em> are baked into the training data. <strong>External validation</strong> isn't a nice-to-have; it's the only test that tells you whether the model learned biology or learned UCSF.</p>
-      <p>This is the conceptual scaffolding for every "but does it work outside the development site?" question you'll ever ask a vendor.</p>
-    </div>
-
-    <div class="outline-section-label">Connects to</div>
-    <div class="outline-card connects">
-      <div class="outline-card-label">↳ Other chapters</div>
-      <ul>
-        <li><strong>Chapter v</strong> — neural networks are just very flexible loss-minimizers</li>
-        <li><strong>Chapter xvii</strong> — overfitting and external validity are the heart of clinical AI critical appraisal</li>
-        <li><strong>Chapter x</strong> — modern LLM training extends loss-minimization across stages</li>
-      </ul>
-    </div>
-
-    <div class="outline-cta">
-      <h3>Read the full chapter?</h3>
-      <p>Includes the overfitting illustration and the train/val/test discipline you can teach to residents.</p>
-      <button class="outline-cta-btn" onclick="askClaude('Write the full chapter iv — loss, training, and generalization. Multi-step interactive version.')">Read full chapter →</button>
-      <div class="outline-secondary-actions">
-        <button class="outline-secondary-btn" onclick="goto('ch3')">← Previous</button>
-        <button class="outline-secondary-btn" onclick="goto('ch5')">Next outline →</button>
+    <div class="step" data-ch4-step="4">
+      <h2 class="ch-h2">Generalization — the only thing that actually matters</h2>
+      <p>A model that "learned" simply means a model whose loss got small on the data we showed it. That's necessary but completely insufficient. The thing we actually want is <strong>generalization</strong>: small loss on data the model has never seen.</p>
+      <p>This is the single most important distinction in all of ML. A model with great training loss and terrible held-out loss has <em>memorized</em>, not learned. A model with somewhat-worse training loss but matching held-out loss has actually internalized the underlying patterns.</p>
+      <div class="callout teal">
+        <div class="callout-label">★ The diagnostic question</div>
+        <p>If <em>training loss is much lower than test loss</em>, you've overfit — you're memorizing.</p>
+        <p>If <em>training and test loss are both high</em>, you've underfit — the model isn't expressive enough to capture the patterns.</p>
+        <p>If <em>both are low and close</em>, congratulations: you have a generalizing model.</p>
       </div>
+      <div class="callout coral">
+        <div class="callout-label">Overfitting in the wild</div>
+        <p>Almost every "AUC of 0.99 on internal data, AUC of 0.65 in the real world" headline is overfitting. The model didn't learn pneumonia; it learned which scanner the pneumonia training images came from, or which radiologist tends to confirm pneumonia readings, or which time-of-day the labels were entered. Memorization in disguise.</p>
+      </div>
+    </div>
+
+    <div class="step" data-ch4-step="5">
+      <h2 class="ch-h2">Train / validation / test — a discipline, not a formality</h2>
+      <p>To detect overfitting, you split your data three ways before you ever look at it:</p>
+      <div class="callout">
+        <div class="callout-label">The three sets</div>
+        <p><strong>Training set</strong> — the model's homework. The parameters are tuned on this.</p>
+        <p><strong>Validation set</strong> — used to tune <em>hyperparameters</em> (learning rate, model size, regularization strength). The model "sees" it indirectly because you make decisions based on it.</p>
+        <p><strong>Test set</strong> — locked in a vault. The model sees it exactly once, after all decisions are final, to produce the number you report.</p>
+      </div>
+      <div class="callout coral">
+        <div class="callout-label">⚠ The deadly sin</div>
+        <p>If the test set has ever influenced any decision — model selection, threshold choice, hyperparameter tuning, "let me just check what AUC we'd get if we used a different cutoff" — your reported number is contaminated. This is the <strong>test-set leakage</strong> failure mode and it's how most AUCs in the literature end up larger than they would be on truly fresh data.</p>
+      </div>
+      <div class="callout amber">
+        <div class="callout-label">⚕ Time-aware splits matter clinically</div>
+        <p>For clinical models, randomly shuffling patients across train/test is too easy a split. The honest version is a <em>temporal</em> split — train on data from 2019, test on 2020. That tests the model's resilience to drift (treatment changes, EHR updates, new diagnoses entering the codebook). Many clinical AI papers report random-split AUCs that look beautiful and would not survive a temporal-split eval.</p>
+      </div>
+    </div>
+
+    <div class="step" data-ch4-step="6">
+      <h2 class="ch-h2">External validation — the harder bar</h2>
+      <p>Even a clean train/val/test discipline isn't enough to prove a model will work somewhere new. The same hospital, same era, same documentation conventions are baked into both your train and test sets. <strong>External validation</strong> means: run the model on a different site, a different era, a different population, with no further tuning, and see what happens.</p>
+      <p>This is where many clinical AI products quietly fail. A model trained on UCSF can hit AUC 0.95 on UCSF held-out and collapse to 0.70 at NYU — not because UCSF cheated, but because the model learned UCSF: documentation styles, scanner manufacturers, clinician habits, lab-vendor reference ranges, the population demographic.</p>
+      <div class="callout teal">
+        <div class="callout-label">★ The four levels of validation, ranked</div>
+        <p><strong>1. Internal cross-validation</strong> — the weakest. Same patients, just resampled.</p>
+        <p><strong>2. Random hold-out</strong> — better. Same site, same era, different patients.</p>
+        <p><strong>3. Temporal hold-out</strong> — better still. Same site, future data.</p>
+        <p><strong>4. External hold-out</strong> — the real bar. Different site entirely. The closer this site is to where you'll actually deploy, the more useful the result.</p>
+      </div>
+      <p>"External validation" should be your first question for any clinical AI product, before you ask about anything else. It's the line between "interesting research" and "a thing you'd let near patients."</p>
+    </div>
+
+    <div class="step" data-ch4-step="7">
+      <h2 class="ch-h2">The shape of the chapter</h2>
+      <p>You now understand training as: <em>repeatedly compute a loss, follow the gradient downhill</em>. You understand the difference between memorization (train loss small, test loss big) and generalization (both small and close). And you understand why external validation is the line between a paper and a product.</p>
+      <p>This is the foundation under almost every clinical AI critique you'll ever do. When the next vendor pitches you and says "we got AUC 0.94," your first three questions are now: <em>What was the loss function? How was the test set kept separate? Was there external validation?</em> Two minutes of conversation and you'll know whether the number means anything.</p>
+      <div class="badge-reveal">
+        <div class="badge-icon">📉</div>
+        <div class="badge-name">Loss whisperer</div>
+        <div class="badge-flavor">+150 XP · you can spot overfitting in a methods section</div>
+      </div>
+
+      <h3 class="ch-h3">Worth keeping handy</h3>
+      <a class="resource-link ch" href="https://en.wikipedia.org/wiki/Overfitting" target="_blank">
+        <div class="rl-title">Wikipedia: Overfitting</div>
+        <div class="rl-desc">The standard reference. Includes the canonical "high-variance polynomial" picture you've probably seen.</div>
+      </a>
+      <a class="resource-link ch" href="https://www.deeplearningbook.org/contents/ml.html" target="_blank">
+        <div class="rl-title">Deep Learning Book — ML basics</div>
+        <div class="rl-desc">Goodfellow, Bengio, Courville. The dense version. Worth grabbing the chapter as PDF for reference.</div>
+      </a>
+    </div>
+
+    <div class="nav">
+      <button class="btn" id="ch4Prev" disabled>← Back</button>
+      <button class="btn primary" id="ch4Next">Continue →</button>
     </div>
   </div>
 </div>
 
 <!-- CH 5: neural networks -->
-<div class="page outline-page" id="page-ch5">
-  <div class="outline-wrap">
-    <div class="outline-tag-row">
-      <span class="outline-tag foundations">Foundations</span>
-      <span class="outline-tag preview">Outline</span>
+<div class="page" id="page-ch5">
+  <div class="wrap">
+    <div class="chapter-frontispiece">
+      <div class="ch-num-line">Part I · Chapter v</div>
+      <h1 class="ch-title">Neural networks, intuitively</h1>
+      <p class="ch-subtitle">Stacks of simple matrix math that, somehow, learn to see and reason.</p>
     </div>
-    <div class="outline-frontispiece">
-      <div class="outline-num-line">Part I · Chapter v</div>
-      <h1 class="outline-title">Neural networks, intuitively</h1>
-      <p class="outline-subtitle">Stacks of simple matrix math that, somehow, learn to see and reason.</p>
+
+    <div class="completed-banner" id="ch5Completed" style="display:none;">
+      <span class="completed-banner-icon">✓</span>
+      <div><strong>You've completed this chapter.</strong> Re-read it any time — your progress and badge stay safe.</div>
     </div>
+
+    <div class="progress-row">
+      <span class="step-counter" id="ch5Counter">1 / 7</span>
+      <div class="bar"><div class="fill" id="ch5Fill" style="width: 14%;"></div></div>
+      <span id="ch5Time">~4 min</span>
+    </div>
+
     <div class="listen-panel" data-chapter="ch5">
       <div class="listen-row">
         <span class="listen-label">Listen</span>
@@ -6113,76 +6212,125 @@ Draft:
     </div>
 
 
-    <div class="outline-section-label">The chapter in one paragraph</div>
-    <div class="outline-card">
-      <p>A neural network is a stack of layers, each of which does <em>multiply by a matrix, add a bias, apply a non-linear squish</em> — that's it. The "deep" in deep learning means many such layers stacked. What makes it powerful: each layer can learn a different level of abstraction. In an image network, early layers learn edges, middle layers learn shapes, late layers learn "this is a kidney." Nobody tells the network what features to look for — gradient descent on the loss function discovers them. The network builds its own internal language, layer by layer.</p>
-    </div>
-
-    <div class="outline-section-label">Key takeaways</div>
-    <div class="outline-card takeaway">
-      <div class="outline-card-label">★ What sticks</div>
-      <ul>
-        <li><strong>"Deep" = many layers stacked</strong>, not "fancy."</li>
-        <li><strong>Each layer transforms a representation.</strong> Input features go in; richer, more abstract features come out.</li>
-        <li><strong>Non-linearity is what makes the stack work.</strong> Without it, ten layers collapse into one.</li>
-        <li><strong>The network discovers its own features.</strong> This is the whole revolution — humans no longer hand-engineer the inputs.</li>
-      </ul>
-    </div>
-
-    <div class="outline-section-label">Metaphors that help it click</div>
-    <div class="outline-card metaphors">
-      <div class="outline-card-label">⌘ Two ways to feel it</div>
-      <div class="metaphor-row clinical">
-        <div class="metaphor-icon">⚕</div>
-        <div class="metaphor-body"><strong>Clinical:</strong> A neural network is a stack of consultations. Raw data goes to the H&P; the cardiology consult refines a piece of it; renal layers on more; ID adds another lens. By the bottom of the stack, the synthesis is something no single specialist could have written alone. Each "layer" only does one transformation, but the stack as a whole produces understanding.</div>
+    <div class="step active" data-ch5-step="1">
+      <h2 class="ch-h2">From hand-picked features to learned ones</h2>
+      <p>Old ML required <em>feature engineering</em>: a human picked which 20 properties of a patient to feed the model. Age, creatinine, BUN, MAP, and so on. The model was simple (logistic regression), and the magic was in the human's choice of inputs.</p>
+      <p>The 2012 deep-learning revolution flipped this. You give the network the raw input — pixels, words, or 1,200 EHR features — and the <em>network</em> figures out which combinations matter. It builds the features for itself.</p>
+      <div class="callout">
+        <div class="callout-label">The shift, in one sentence</div>
+        <p>Old ML: humans pick features, machines fit weights. Deep learning: humans pick architecture and loss, machines pick the features.</p>
       </div>
-      <div class="metaphor-row daily">
-        <div class="metaphor-icon">☕</div>
-        <div class="metaphor-body"><strong>Daily:</strong> A neural network is a kitchen line. Prep cook chops, sauté cooks, plater plates, expediter checks. Each station does one narrow thing; the dish only exists because of the pipeline. Make the line longer (deeper) and you can produce more elaborate dishes — but you also need more raw ingredients to keep it busy.</div>
+      <p>This is more profound than it sounds. The features a deep network discovers are often <em>better</em> than what a human would have picked — because the network is willing to try millions of combinations and keep what works.</p>
+    </div>
+
+    <div class="step" data-ch5-step="2">
+      <h2 class="ch-h2">A neuron — one tiny operation</h2>
+      <p>The atom of a neural network is a single artificial neuron. Despite the biological name, it's just three operations:</p>
+      <div class="callout teal">
+        <div class="callout-label">★ What one neuron does</div>
+        <p><strong>1. Multiply</strong> each input by a learned weight.</p>
+        <p><strong>2. Sum</strong> all the weighted inputs (plus a learned "bias" constant).</p>
+        <p><strong>3. Apply</strong> a non-linear function (called an "activation") — typically ReLU, which just clips negatives to zero.</p>
+      </div>
+      <p>That's it. A neuron is a weighted sum, squashed through a non-linearity. One neuron can't do much. The trick is that you wire <em>thousands</em> of them in parallel into a "layer," and stack many layers — and that's where the magic is.</p>
+    </div>
+
+    <div class="step" data-ch5-step="3">
+      <h2 class="ch-h2">Layers — stacking transformations</h2>
+      <p>A neural-network layer is a population of neurons that all see the same input but each compute a slightly different weighted sum. The output is a vector — one number per neuron in the layer.</p>
+      <p>Stack layers, and each layer's output becomes the next layer's input. By the time you're 20 layers deep, the original raw input has been transformed many times. Each layer learns a representation that's <em>more useful</em> for the final task than the previous one.</p>
+      <div class="callout">
+        <div class="callout-label">What "more useful" means in an image network</div>
+        <p>Layer 1 learns edges. Layer 5 learns shapes. Layer 12 learns "this is a kidney." Layer 20 outputs probabilities for "AKI yes/no." Nobody told the network to learn edges-then-shapes-then-organs — gradient descent on the loss function discovered that hierarchy was the most efficient way to compress image content into the answer.</p>
+      </div>
+      <div class="callout amber">
+        <div class="callout-label">⚕ Why this matters for clinical AI</div>
+        <p>When a network is trained on chest X-rays from one institution, it may learn features specific to that institution's imaging hardware (early layers picking up scanner-specific noise patterns). The "kidney" detection at the deep layers is downstream of those low-level features — and that's part of why models don't transfer cleanly to a new hospital.</p>
       </div>
     </div>
 
-    <div class="outline-section-label">The clinical hook</div>
-    <div class="outline-card clinical">
-      <div class="outline-card-label">⚕ Why a nephrologist should care</div>
-      <p>This is why imaging AI took off first. A radiologist looking at a chest X-ray uses learned features — edges, opacities, shadows — and integrates them. A deep network does the same thing: edges → shapes → patterns → "consolidation." The network <em>discovers</em> what to look for from millions of labeled images.</p>
-      <p>It also explains why interpretability is hard. The "features" the network uses are abstract numbers in vector space, not human-readable concepts. When a regulator asks "why did the model say AKI?" the honest answer is often "we can guess, but we can't fully tell."</p>
-    </div>
-
-    <div class="outline-section-label">Connects to</div>
-    <div class="outline-card connects">
-      <div class="outline-card-label">↳ Other chapters</div>
-      <ul>
-        <li><strong>Chapter ii</strong> — the network's internal "features" are embeddings</li>
-        <li><strong>Chapter vii</strong> — attention is a special trick for letting the network look around</li>
-        <li><strong>Chapter xix</strong> — the interpretability question is where bias auditing lives</li>
-      </ul>
-    </div>
-
-    <div class="outline-cta">
-      <h3>Read the full chapter?</h3>
-      <p>With a layer-by-layer walkthrough using a familiar clinical analogy.</p>
-      <button class="outline-cta-btn" onclick="askClaude('Write the full chapter v — neural networks, intuitively. Multi-step interactive version with diagrams.')">Read full chapter →</button>
-      <div class="outline-secondary-actions">
-        <button class="outline-secondary-btn" onclick="goto('ch4')">← Previous</button>
-        <button class="outline-secondary-btn" onclick="goto('ch6')">Next outline →</button>
+    <div class="step" data-ch5-step="4">
+      <h2 class="ch-h2">Non-linearity — without it, the whole stack collapses</h2>
+      <p>Here's a deceptively important fact: if you stack 20 layers of pure linear operations, the entire stack mathematically reduces to a single linear operation. All that depth buys you nothing.</p>
+      <p>The non-linearity (ReLU, sigmoid, GELU — exact choice varies) is what prevents the collapse. It's the thing that lets each layer learn a transformation the previous one couldn't replicate. Without it, no representational hierarchy. With it, the magic happens.</p>
+      <div class="callout teal">
+        <div class="callout-label">The idea in one image</div>
+        <p>Imagine layer 1 draws a straight line on a piece of paper. Layer 2 also draws a line. If you can only draw lines, you can't make a circle no matter how many lines you stack. Add a "fold the paper here" step (the non-linearity) between layers, and now stacking lines + folds can produce arbitrary curves. That's why depth × non-linearity = expressive power.</p>
       </div>
+    </div>
+
+    <div class="step" data-ch5-step="5">
+      <h2 class="ch-h2">Backpropagation — how training actually works</h2>
+      <p>You know from chapter iv that training is gradient descent — nudge each parameter to lower the loss. But a deep network has millions of parameters and the loss only sees the final output. How do you know which parameter in layer 3 to nudge?</p>
+      <p><strong>Backpropagation</strong> is the elegant answer. It uses the chain rule from calculus to figure out, for every parameter in the network, how much it contributed to the final loss — and therefore which way to nudge it.</p>
+      <div class="callout">
+        <div class="callout-label">In plain English</div>
+        <p>You compute the loss at the output. You ask: "how much did the last layer's neurons contribute to this loss?" Then: "given those contributions, how much did the layer-before-last contribute?" You walk the credit-assignment backward through the network, layer by layer, until every parameter has an attributed share of the blame. Then you take a step downhill on each parameter, all at once.</p>
+      </div>
+      <p>The remarkable thing is that backprop just works. It's been the same mathematical procedure for decades, and it scales from 10-parameter toys to trillion-parameter LLMs without fundamental change.</p>
+    </div>
+
+    <div class="step" data-ch5-step="6">
+      <h2 class="ch-h2">Why depth matters — and when it doesn't</h2>
+      <p>Deeper networks can express richer functions. The progression from 5-layer networks (early 2010s) to 100+ layer networks (modern transformers) brought leaps in capability that shallower networks could not have produced regardless of how much data they got.</p>
+      <p>But depth has costs. Deeper networks need:</p>
+      <div class="callout amber">
+        <div class="callout-label">The depth tradeoff</div>
+        <p><strong>More data</strong> — every additional layer is more parameters that need data to constrain.</p>
+        <p><strong>More compute</strong> — both for training (longer backprop chains) and inference (more matrix multiplies per prediction).</p>
+        <p><strong>Architectural tricks</strong> — vanilla deep networks suffer "vanishing gradients" where the signal dies before reaching early layers. Modern networks use residual connections, normalization layers, and careful initialization to keep gradients flowing.</p>
+      </div>
+      <p>For most clinical tabular data (a few thousand patients, a few dozen features), you don't actually need depth. A well-tuned gradient-boosted tree (XGBoost) often beats a deep network. Depth pays off mostly when the input is rich and unstructured — images, audio, long text.</p>
+    </div>
+
+    <div class="step" data-ch5-step="7">
+      <h2 class="ch-h2">The shape you now have</h2>
+      <p>You understand a neural network as: a stack of layers, each one a population of "weighted-sum-then-squash" neurons, with non-linearities between them, trained by backpropagation against a loss function. Depth lets the network build a hierarchy of representations — primitive features at the bottom, abstract concepts at the top.</p>
+      <p>And you understand the cost: more depth → more data, more compute, less interpretability. When a regulator asks "why did the model predict AKI?", the honest answer about a deep network is often "we can guess, but we can't fully tell." That's the conceptual root of the interpretability conversation in clinical AI — and the reason why "explainable AI" is a whole sub-field.</p>
+      <div class="badge-reveal">
+        <div class="badge-icon">🎂</div>
+        <div class="badge-name">Layer cake</div>
+        <div class="badge-flavor">+130 XP · you can describe a deep network without the mysticism</div>
+      </div>
+
+      <h3 class="ch-h3">Worth keeping handy</h3>
+      <a class="resource-link ch" href="https://playground.tensorflow.org/" target="_blank">
+        <div class="rl-title">TensorFlow Playground</div>
+        <div class="rl-desc">A live, interactive neural network you can poke. Watch decision boundaries form layer by layer. The single best way to feel deep learning.</div>
+      </a>
+      <a class="resource-link ch" href="https://distill.pub/" target="_blank">
+        <div class="rl-title">Distill.pub</div>
+        <div class="rl-desc">Visual ML explainers — the gold standard for "I want to actually see what's happening inside the network."</div>
+      </a>
+    </div>
+
+    <div class="nav">
+      <button class="btn" id="ch5Prev" disabled>← Back</button>
+      <button class="btn primary" id="ch5Next">Continue →</button>
     </div>
   </div>
 </div>
 
 <!-- CH 6: tokenization -->
-<div class="page outline-page" id="page-ch6">
-  <div class="outline-wrap">
-    <div class="outline-tag-row">
-      <span class="outline-tag foundations">Foundations</span>
-      <span class="outline-tag preview">Outline</span>
+<div class="page" id="page-ch6">
+  <div class="wrap">
+    <div class="chapter-frontispiece">
+      <div class="ch-num-line">Part I · Chapter vi</div>
+      <h1 class="ch-title">Tokenization, the unglamorous workhorse</h1>
+      <p class="ch-subtitle">How LLMs chop text into the units they actually process — and why this boring step keeps biting clinical AI.</p>
     </div>
-    <div class="outline-frontispiece">
-      <div class="outline-num-line">Part I · Chapter vi</div>
-      <h1 class="outline-title">Tokenization, the unglamorous workhorse</h1>
-      <p class="outline-subtitle">How LLMs chop text into the units they actually process — and why this seemingly boring step keeps biting people.</p>
+
+    <div class="completed-banner" id="ch6Completed" style="display:none;">
+      <span class="completed-banner-icon">✓</span>
+      <div><strong>You've completed this chapter.</strong> Re-read it any time — your progress and badge stay safe.</div>
     </div>
+
+    <div class="progress-row">
+      <span class="step-counter" id="ch6Counter">1 / 7</span>
+      <div class="bar"><div class="fill" id="ch6Fill" style="width: 14%;"></div></div>
+      <span id="ch6Time">~3 min</span>
+    </div>
+
     <div class="listen-panel" data-chapter="ch6">
       <div class="listen-row">
         <span class="listen-label">Listen</span>
@@ -6219,75 +6367,128 @@ Draft:
     </div>
 
 
-    <div class="outline-section-label">The chapter in one paragraph</div>
-    <div class="outline-card">
-      <p>LLMs don't read words. They read <strong>tokens</strong> — chunks that may be a word, part of a word, a number, or even a single character. "Hospitalist" might be one token; "epigastric" might be three; a long medical name might fragment into pieces that don't correspond to anything meaningful. Tokenization is invisible until it isn't: it's why models miscount letters, butcher rare medical terms, get math wrong, and charge by tokens that don't match how you think about text. Boring, weirdly load-bearing.</p>
-    </div>
-
-    <div class="outline-section-label">Key takeaways</div>
-    <div class="outline-card takeaway">
-      <div class="outline-card-label">★ What sticks</div>
-      <ul>
-        <li><strong>A token is not a word.</strong> Common English: roughly 0.75 words per token. Code, names, medical jargon: way more tokens per word.</li>
-        <li><strong>Rare terms tokenize badly.</strong> "Furosemide" is fine; "Dapagliflozin" might split into chunks the model only weakly recognizes.</li>
-        <li><strong>Tokenization causes weird failure modes.</strong> Bad spelling, miscounting letters, confused arithmetic — all downstream of how text was chopped.</li>
-        <li><strong>Token counts drive cost.</strong> When pricing AI features, count tokens, not words.</li>
-      </ul>
-    </div>
-
-    <div class="outline-section-label">Metaphors that help it click</div>
-    <div class="outline-card metaphors">
-      <div class="outline-card-label">⌘ Two ways to feel it</div>
-      <div class="metaphor-row clinical">
-        <div class="metaphor-icon">⚕</div>
-        <div class="metaphor-body"><strong>Clinical:</strong> Tokenization is ICD-10 coding for AI. The continuous reality of "patient came in feeling worse over three days" gets carved into discrete codes the system can count, match, and tabulate. Common things ("dyspnea") get one tidy code; rarer things ("anti-GBM disease") get carved into pieces and lose nuance.</div>
-      </div>
-      <div class="metaphor-row daily">
-        <div class="metaphor-icon">☕</div>
-        <div class="metaphor-body"><strong>Daily:</strong> Tokenization is cutting a recipe into ingredient steps — "salt," "pepper," "1 tbsp" — even though in your head it was one fluid instruction. Common ingredients are one piece; "fenugreek" gets sliced into "fen-u-greek." The model only "sees" what's been chopped.</div>
+    <div class="step active" data-ch6-step="1">
+      <h2 class="ch-h2">LLMs don't read words</h2>
+      <p>The first surprise: a language model doesn't see "hospitalist" as a word. It sees a sequence of <strong>tokens</strong> — chunks that may be a whole word, part of a word, a punctuation mark, a number, or a single character. Every model has a fixed <em>vocabulary</em> of tokens (typically 50,000 to 200,000 of them), and every input gets chopped into a sequence drawn from that vocabulary.</p>
+      <p>This sounds like an implementation detail. It isn't. Almost every quirky LLM behavior — bad spelling, miscounting letters, butchered rare terms, wrong arithmetic, weird billing — traces back to tokenization.</p>
+      <div class="callout">
+        <div class="callout-label">A quick demonstration</div>
+        <p>Type "<em>strawberry</em>" into the OpenAI tokenizer. You'll see it splits as <code>str</code> + <code>aw</code> + <code>berry</code>. The model never "sees" the letters s-t-r-a-w-b-e-r-r-y as individuals. So when you ask "how many r's are in strawberry?" and it confidently says "two," it's because the model is reasoning over chunks, not characters. Same for clinical terms.</p>
       </div>
     </div>
 
-    <div class="outline-section-label">The clinical hook</div>
-    <div class="outline-card clinical">
-      <div class="outline-card-label">⚕ Why a nephrologist should care</div>
-      <p>Tokenization is a hidden tax on clinical AI. A patient note dense with jargon, drug names, and abbreviations costs more tokens than a casual essay of the same length. Specialty terms that don't appear often in general training corpora may tokenize into oddly small fragments, making them harder for the model to handle robustly. When evaluating a clinical AI tool, asking about the tokenizer is a sneakily good diligence question.</p>
-    </div>
-
-    <div class="outline-section-label">Connects to</div>
-    <div class="outline-card connects">
-      <div class="outline-card-label">↳ Other chapters</div>
-      <ul>
-        <li><strong>Chapter ii</strong> — every token gets converted into an embedding</li>
-        <li><strong>Chapter ix</strong> — context windows are measured in tokens</li>
-        <li><strong>Chapter xvii</strong> — tokenizer choice is a clinical-AI eval blind spot</li>
-      </ul>
-    </div>
-
-    <div class="outline-cta">
-      <h3>Read the full chapter?</h3>
-      <p>With an interactive tokenizer demo so you can see how your own clinical text gets split.</p>
-      <button class="outline-cta-btn" onclick="askClaude('Write the full chapter vi — tokenization. Multi-step interactive with a tokenizer demo for clinical text.')">Read full chapter →</button>
-      <div class="outline-secondary-actions">
-        <button class="outline-secondary-btn" onclick="goto('ch5')">← Previous</button>
-        <button class="outline-secondary-btn" onclick="goto('ch7')">Next outline →</button>
+    <div class="step" data-ch6-step="2">
+      <h2 class="ch-h2">Byte-pair encoding (BPE) — how the chopping works</h2>
+      <p>Modern tokenizers (GPT-4, Claude, Gemini, etc.) use a variant of <strong>byte-pair encoding</strong>. The idea is data-driven: tokens that appear together a lot during training get fused into single tokens; rare combinations stay split.</p>
+      <div class="callout teal">
+        <div class="callout-label">★ How BPE builds its vocabulary</div>
+        <p>1. Start with every individual character as a token.</p>
+        <p>2. Find the most-common adjacent pair in the training corpus and merge it into a new single token.</p>
+        <p>3. Repeat until you have ~50,000–200,000 tokens.</p>
       </div>
+      <p>The result: very common words ("the", "patient", "kidney") become single tokens. Less common words split into a few pieces. Rare words split into many small pieces — sometimes down to single letters. The vocabulary <em>encodes the statistics of the training corpus</em>.</p>
+      <div class="callout amber">
+        <div class="callout-label">⚕ The clinical implication</div>
+        <p>The big tokenizers were trained mostly on internet text — which is heavy on tech/news/social-media vocabulary and thin on medical jargon. So <em>furosemide</em> (common) tokenizes well, but <em>tafamidis</em> or <em>dapagliflozin</em> may shatter into 4-5 small pieces the model only weakly understands as a unit. Domain-specific medical tokenizers (BioBERT etc.) handle medical vocab better — and the difference shows up in downstream performance.</p>
+      </div>
+    </div>
+
+    <div class="step" data-ch6-step="3">
+      <h2 class="ch-h2">Special tokens — the model's punctuation</h2>
+      <p>Beyond word-pieces, every tokenizer reserves slots for special tokens that signal structure:</p>
+      <div class="callout">
+        <div class="callout-label">Common special tokens</div>
+        <p><strong>BOS / EOS</strong> — beginning and end of sequence. The model's "start typing here" and "you're done."</p>
+        <p><strong>System / User / Assistant</strong> — markers that distinguish whose turn it is in a chat. The reason a model knows you've moved to a new question.</p>
+        <p><strong>Tool-call tokens</strong> — modern models reserve special tokens for "now I'm calling a tool" and "now the tool returned data."</p>
+      </div>
+      <p>You don't usually see these in your prompts — the API handles them. But they're how the model distinguishes "instruction" from "data" from "previous turn." When prompts go wrong in confusing ways, a malformed special-token sequence is sometimes the cause.</p>
+    </div>
+
+    <div class="step" data-ch6-step="4">
+      <h2 class="ch-h2">Token economics — every word costs money</h2>
+      <p>API providers charge per token, both for input ("prompt tokens") and output ("completion tokens"). Different rates, but both meter on tokens.</p>
+      <div class="callout teal">
+        <div class="callout-label">★ The rough conversion (English)</div>
+        <p><strong>1 token ≈ 0.75 words ≈ 4 characters.</strong> A typical novel chapter is ~10,000 tokens. A 12-page progress note can run 5,000–8,000 tokens depending on how dense it is. A whole admission with imaging reports and labs can hit 50,000+.</p>
+      </div>
+      <div class="callout amber">
+        <div class="callout-label">⚕ Why this matters when sizing a clinical AI feature</div>
+        <p>If you want to feed a patient's full chart into Claude every time someone asks a question, you're talking about hundreds of thousands of tokens per query. At ~$3 per million input tokens for a frontier model, that's real money — and inference latency scales with token count too. This is why most production clinical AI uses RAG (retrieve only relevant snippets) instead of "stuff the whole chart in." Tokenization economics drive architecture.</p>
+      </div>
+    </div>
+
+    <div class="step" data-ch6-step="5">
+      <h2 class="ch-h2">Tokenizer mismatch — a sneaky failure mode</h2>
+      <p>Here's a subtle issue: if you fine-tune a model and the new training data uses a tokenizer with a different vocabulary than the base model expected, performance silently degrades. Or if a vendor switches model families and the tokenizer changes, prompt templates that were carefully tuned for the old token boundaries may behave differently.</p>
+      <div class="callout coral">
+        <div class="callout-label">⚠ A real-world example</div>
+        <p>Some clinical-LLM benchmarks have shown <em>worse</em> performance after fine-tuning on medical text, traceable to: the medical text introduced rare terms that fragmented oddly under the original tokenizer, and the fine-tuning didn't expand the vocabulary. The model spent capacity learning to glue fragments back together rather than learning medicine.</p>
+      </div>
+      <p>This is one of those questions you'd never think to ask a vendor — and that's exactly why it's a useful diligence question. "What tokenizer does your clinical model use, and was it adapted to medical vocabulary?" tells you whether the team is sophisticated about the unglamorous details.</p>
+    </div>
+
+    <div class="step" data-ch6-step="6">
+      <h2 class="ch-h2">When tokenization breaks reasoning</h2>
+      <p>The interaction between tokenization and certain tasks is genuinely weird. The famous examples:</p>
+      <div class="callout">
+        <div class="callout-label">Tokenization-induced quirks</div>
+        <p><strong>Counting letters:</strong> "How many r's in strawberry?" — model says 2 because it doesn't see the individual letters.</p>
+        <p><strong>Math on long numbers:</strong> Models often miscompute 73456 × 21 because each multi-digit number tokenizes as a chunk, not as digits.</p>
+        <p><strong>Reverse-string tasks:</strong> "Reverse the word 'phenomenon'" can fail because the model doesn't have direct access to the letters.</p>
+        <p><strong>Subtle medical-term confusion:</strong> Look-alike drugs that tokenize similarly can blur in the model's representation more than they would for a human pharmacist.</p>
+      </div>
+      <p>Most of these get patched over by special training. Modern LLMs use chain-of-thought to "spell out" tasks where tokenization gets in the way. But the underlying issue persists: <em>the model thinks in tokens, not in characters or in concepts directly.</em></p>
+    </div>
+
+    <div class="step" data-ch6-step="7">
+      <h2 class="ch-h2">The shape you now have</h2>
+      <p>You understand the model's input as a sequence of tokens drawn from a fixed vocabulary, with the vocabulary's design determined by what was common during training. You know that medical vocabulary is often poorly served by general tokenizers, that token counts drive cost, and that quirky model failures often trace back to how text was chopped.</p>
+      <p>The next time a clinical AI vendor pitches you, "what tokenizer, and was it adapted?" is a quietly powerful question to ask. The teams who understand the answer are usually the teams whose product actually works.</p>
+      <div class="badge-reveal">
+        <div class="badge-icon">🔪</div>
+        <div class="badge-name">Token counter</div>
+        <div class="badge-flavor">+110 XP · you can spot tokenizer issues in a vendor pitch</div>
+      </div>
+
+      <h3 class="ch-h3">Worth keeping handy</h3>
+      <a class="resource-link ch" href="https://platform.openai.com/tokenizer" target="_blank">
+        <div class="rl-title">OpenAI Tokenizer (try it)</div>
+        <div class="rl-desc">Paste any clinical text — note, prescription, problem list — and watch how it gets chopped. Two minutes here is worth a textbook chapter of intuition.</div>
+      </a>
+      <a class="resource-link ch" href="https://huggingface.co/learn/nlp-course/chapter6/1" target="_blank">
+        <div class="rl-title">HuggingFace NLP Course — Tokenizers</div>
+        <div class="rl-desc">If you want depth: the official walkthrough of BPE, WordPiece, and SentencePiece. Worth the 30 min if you're going to build with this stuff.</div>
+      </a>
+    </div>
+
+    <div class="nav">
+      <button class="btn" id="ch6Prev" disabled>← Back</button>
+      <button class="btn primary" id="ch6Next">Continue →</button>
     </div>
   </div>
 </div>
 
 <!-- CH 7: attention -->
-<div class="page outline-page" id="page-ch7">
-  <div class="outline-wrap">
-    <div class="outline-tag-row">
-      <span class="outline-tag foundations">Foundations</span>
-      <span class="outline-tag preview">Outline · likely candidate for full chapter</span>
+<div class="page" id="page-ch7">
+  <div class="wrap">
+    <div class="chapter-frontispiece">
+      <div class="ch-num-line">Part I · Chapter vii</div>
+      <h1 class="ch-title">Attention, the central mechanism</h1>
+      <p class="ch-subtitle">The trick that made transformers possible — and the closest thing modern AI has to a "thinking" step.</p>
     </div>
-    <div class="outline-frontispiece">
-      <div class="outline-num-line">Part I · Chapter vii</div>
-      <h1 class="outline-title">Attention, the central mechanism</h1>
-      <p class="outline-subtitle">The trick that made transformers possible — and the closest thing modern AI has to a "thinking" step.</p>
+
+    <div class="completed-banner" id="ch7Completed" style="display:none;">
+      <span class="completed-banner-icon">✓</span>
+      <div><strong>You've completed this chapter.</strong> Re-read it any time — your progress and badge stay safe.</div>
     </div>
+
+    <div class="progress-row">
+      <span class="step-counter" id="ch7Counter">1 / 7</span>
+      <div class="bar"><div class="fill" id="ch7Fill" style="width: 14%;"></div></div>
+      <span id="ch7Time">~4 min</span>
+    </div>
+
     <div class="listen-panel" data-chapter="ch7">
       <div class="listen-row">
         <span class="listen-label">Listen</span>
@@ -6324,60 +6525,103 @@ Draft:
     </div>
 
 
-    <div class="outline-section-label">The chapter in one paragraph</div>
-    <div class="outline-card">
-      <p>Attention is the mechanism that lets each token in a sentence <em>look at</em> every other token to decide what's relevant. When the model is processing the word "it" in "the patient took the pill because <strong>it</strong> was prescribed," attention figures out that "it" probably refers to "the pill" — by computing a similarity score between every pair of tokens and pulling information accordingly. Stack many layers of attention and you get a transformer. The reason the 2017 paper is called "Attention Is All You Need" is that this single mechanism, applied in layers, was enough to dethrone everything else.</p>
-    </div>
-
-    <div class="outline-section-label">Key takeaways</div>
-    <div class="outline-card takeaway">
-      <div class="outline-card-label">★ What sticks</div>
-      <ul>
-        <li><strong>Attention is "look around and pull relevant info."</strong> Each token decides what to attend to in the rest of the sequence.</li>
-        <li><strong>It's how the model handles long-range dependencies.</strong> A pronoun on page 3 can attend to a noun on page 1.</li>
-        <li><strong>Multi-head attention</strong> = run several attention computations in parallel, each looking for different kinds of relationships.</li>
-        <li><strong>Self-attention is what makes transformers different.</strong> Earlier architectures (RNNs) processed text sequentially; attention lets the model see everything at once.</li>
-      </ul>
-    </div>
-
-    <div class="outline-section-label">Metaphors that help it click</div>
-    <div class="outline-card metaphors">
-      <div class="outline-card-label">⌘ Two ways to feel it</div>
-      <div class="metaphor-row clinical">
-        <div class="metaphor-icon">⚕</div>
-        <div class="metaphor-body"><strong>Clinical:</strong> Attention is the chief resident scanning a 30-page chart and zeroing in on the five lines that actually matter for tonight's plan. Most of the chart is irrelevant — the trick is knowing what to focus on, and assigning weight accordingly. Attention is that selective weighting, formalized.</div>
-      </div>
-      <div class="metaphor-row daily">
-        <div class="metaphor-icon">☕</div>
-        <div class="metaphor-body"><strong>Daily:</strong> Attention is reading a long Slack thread and instantly catching the @-mentions of you. The brain ignores 95% of the words; the focused attention on a few names is what lets you respond fast. Same principle, multiplied across every word in a sentence.</div>
+    <div class="step active" data-ch7-step="1">
+      <h2 class="ch-h2">The problem attention solves</h2>
+      <p>Before attention, language models read text the way you'd read a sentence with your finger blocking everything except the current word. The model could remember a few words back, but long-range dependencies — a pronoun on page 3 referring to a noun on page 1 — were hard.</p>
+      <p>The 2017 paper "Attention Is All You Need" introduced a different idea: let every token, when being processed, <em>look at every other token</em> in the input and pull whatever is relevant. No more sequential bottleneck.</p>
+      <div class="callout">
+        <div class="callout-label">The core sentence to remember</div>
+        <p>Attention is "for each word, decide which other words to weight, then pull information accordingly." Everything else is implementation detail.</p>
       </div>
     </div>
 
-    <div class="outline-section-label">The clinical hook</div>
-    <div class="outline-card clinical">
-      <div class="outline-card-label">⚕ Why a nephrologist should care</div>
-      <p>Attention is why an LLM can read a 12-page progress note and remember that the AKI mentioned in the H&P is the same one being followed in the assessment. It's also why context window limits matter — attention has a quadratic cost in sequence length, which is why early models had short context and modern frontier models have very long ones.</p>
-      <p>And: attention is the closest computational analog to what clinicians do when reading a chart. You don't read linearly; you scan, jump back, cross-reference. Attention lets a model do something similar.</p>
-    </div>
-
-    <div class="outline-section-label">Connects to</div>
-    <div class="outline-card connects">
-      <div class="outline-card-label">↳ Other chapters</div>
-      <ul>
-        <li><strong>Chapter ii</strong> — attention operates over embeddings</li>
-        <li><strong>Chapter viii</strong> — attention is the engine inside transformers</li>
-        <li><strong>Chapter ix</strong> — attention's quadratic cost is why context windows matter economically</li>
-      </ul>
-    </div>
-
-    <div class="outline-cta">
-      <h3>Read the full chapter?</h3>
-      <p>This is one of the chapters where an interactive walkthrough genuinely helps — building it in full would include a "watch attention happen" visualization.</p>
-      <button class="outline-cta-btn" onclick="askClaude('Write the full chapter vii — attention, the central mechanism. Multi-step interactive with an attention visualization.')">Read full chapter →</button>
-      <div class="outline-secondary-actions">
-        <button class="outline-secondary-btn" onclick="goto('ch6')">← Previous</button>
-        <button class="outline-secondary-btn" onclick="goto('ch8')">Next outline →</button>
+    <div class="step" data-ch7-step="2">
+      <h2 class="ch-h2">Q, K, V — the three roles each token plays</h2>
+      <p>For attention to work, every token gets transformed into three different versions of itself, each with a different role:</p>
+      <div class="callout teal">
+        <div class="callout-label">★ The three vectors per token</div>
+        <p><strong>Query (Q):</strong> "What am I looking for?" — when this token is the active one being processed.</p>
+        <p><strong>Key (K):</strong> "What do I offer?" — what label this token presents to other tokens that might want to find it.</p>
+        <p><strong>Value (V):</strong> "What information do I carry?" — the actual content that gets pulled if a query matches.</p>
       </div>
+      <p>Imagine a library. The query is your search term. The keys are the spines of books on the shelf. The values are the contents of the books. You scan keys for matches to your query, then read the contents (values) of the books with the highest match.</p>
+      <div class="callout">
+        <div class="callout-label">⚕ The clinical version</div>
+        <p>You walk into a patient's room (query: "what's most concerning right now?"). The chart contains many sections (keys: vitals, labs, meds, notes). Some are highly relevant given your query (the keys that match best); others aren't. You read those sections (values) closely. Attention is exactly this — applied per-token, in parallel, mathematically.</p>
+      </div>
+    </div>
+
+    <div class="step" data-ch7-step="3">
+      <h2 class="ch-h2">The attention math, conceptually</h2>
+      <p>For each query, the model computes a similarity score with every key (typically a dot product — high when the vectors point in similar directions). Those scores are normalized via softmax into probabilities that sum to 1: the <strong>attention weights</strong>.</p>
+      <p>Then the values from all tokens are combined as a weighted sum, with each token's value weighted by how much attention the query paid to that token's key. The result: a single new vector that's a tailored mixture of all the input information, weighted by relevance.</p>
+      <div class="callout">
+        <div class="callout-label">In one sentence</div>
+        <p>Attention output for a query = weighted sum of all values, where the weights are how well each key matched the query.</p>
+      </div>
+      <p>This sounds abstract, but the consequence is profound: each output token is built from <em>all</em> input tokens, with the model learning which ones to weight heavily. There's no fixed window, no sequential bottleneck.</p>
+    </div>
+
+    <div class="step" data-ch7-step="4">
+      <h2 class="ch-h2">Multi-head attention — many lenses at once</h2>
+      <p>One attention computation captures one kind of relationship. But sentences have many kinds of relationships — grammatical, semantic, coreference, temporal — and the model wants to see them all.</p>
+      <p>The fix: run attention <em>several times in parallel</em>, with different learned Q/K/V transformations each time. These parallel runs are called <strong>heads</strong>. Each head learns to specialize in a different kind of pattern.</p>
+      <div class="callout teal">
+        <div class="callout-label">★ What different heads tend to do</div>
+        <p>Studying trained transformers shows heads spontaneously specialize. Some heads attend to syntactic neighbors (the verb-finds-its-subject head). Others attend to semantic relationships (the patient-finds-their-diagnosis head). Others find coreference (the it-points-back-to-the-pill head). All learned, none designed.</p>
+      </div>
+      <p>Modern frontier models have dozens of heads per layer and dozens of layers — so hundreds of distinct attention patterns are computed for each token, each layer, in parallel. The richness comes from the <em>combinations</em>.</p>
+    </div>
+
+    <div class="step" data-ch7-step="5">
+      <h2 class="ch-h2">Self-attention vs cross-attention</h2>
+      <p>Two flavors of the same mechanism, used in different places:</p>
+      <div class="callout">
+        <div class="callout-label">The two flavors</div>
+        <p><strong>Self-attention:</strong> queries, keys, and values all come from the <em>same</em> sequence. This is how a token in your input attends to other tokens in your input. It's the workhorse of modern LLMs — every layer in a decoder-only transformer (GPT, Claude, Llama) is mostly self-attention.</p>
+        <p><strong>Cross-attention:</strong> queries come from one sequence, keys/values from <em>another</em>. This is how an encoder-decoder model lets the decoder "look at" the encoded input. Used in translation models, in some retrieval-augmented setups, and inside multimodal models where the query is text and the keys/values are image patches.</p>
+      </div>
+      <p>For the language models you'll mostly interact with (Claude, GPT-4), self-attention is the dominant mechanism. Cross-attention shows up when you start mixing modalities or doing retrieval-grounded generation.</p>
+    </div>
+
+    <div class="step" data-ch7-step="6">
+      <h2 class="ch-h2">The quadratic cost — why context is expensive</h2>
+      <p>Attention has a hard mathematical fact baked into it: each token attends to every other token, so a sequence of length N requires N × N attention computations. <strong>The cost grows quadratically with sequence length.</strong></p>
+      <p>Double the input length and inference takes 4× as long. 10× the input length and inference takes 100× as long. This is why early transformers (GPT-2) had ~1k context windows: anything longer was prohibitively expensive.</p>
+      <div class="callout amber">
+        <div class="callout-label">Why modern long context exists</div>
+        <p>Frontier models in 2026 have 200k–2M token context windows. Most of the gain came from clever engineering — sparse attention patterns, sliding windows, hierarchical schemes, key-value caching — that approximate the full quadratic computation while running closer to linear. The math is unchanged; the implementations have learned to cheat efficiently.</p>
+      </div>
+      <div class="callout amber">
+        <div class="callout-label">⚕ What this means at the bedside</div>
+        <p>"Long context = expensive" isn't an aesthetic claim. When a clinical AI feature feeds in the entire chart, every additional 1,000 tokens of context costs measurable money and latency. Most production systems use RAG (retrieve only the relevant 5%) for exactly this reason. Long-context use is reserved for cases where you genuinely need to see everything — a comprehensive readmission risk model, say.</p>
+      </div>
+    </div>
+
+    <div class="step" data-ch7-step="7">
+      <h2 class="ch-h2">The shape you now have</h2>
+      <p>Attention is "let every token look at every other token, weight what it sees, and pull information." Multi-head attention runs the operation in parallel many times to capture different kinds of relationships. Self-attention is the workhorse inside modern LLMs; cross-attention shows up at boundaries between sequences. The cost is quadratic in sequence length, which is why context window size is both a capability flex and an economic constraint.</p>
+      <p>Understanding attention is the bridge to understanding transformers (next chapter), context window economics (chapter ix), and a lot of architectural decisions in deployed clinical AI.</p>
+      <div class="badge-reveal">
+        <div class="badge-icon">👁️</div>
+        <div class="badge-name">Attention paid</div>
+        <div class="badge-flavor">+160 XP · the central mechanism is no longer mysterious</div>
+      </div>
+
+      <h3 class="ch-h3">Worth keeping handy</h3>
+      <a class="resource-link ch" href="https://jalammar.github.io/illustrated-transformer/" target="_blank">
+        <div class="rl-title">Jay Alammar — The Illustrated Transformer</div>
+        <div class="rl-desc">The canonical visual explainer. The pictures of attention in this post are why the field's collective intuition for attention is what it is. Worth 30 min.</div>
+      </a>
+      <a class="resource-link ch" href="https://arxiv.org/abs/1706.03762" target="_blank">
+        <div class="rl-title">Vaswani et al. — Attention Is All You Need</div>
+        <div class="rl-desc">The original paper. Short, clear, eight pages. Read once for cultural literacy; the diagrams are the parts to study.</div>
+      </a>
+    </div>
+
+    <div class="nav">
+      <button class="btn" id="ch7Prev" disabled>← Back</button>
+      <button class="btn primary" id="ch7Next">Continue →</button>
     </div>
   </div>
 </div>
@@ -8324,9 +8568,7 @@ Draft:
     // track recent activity
     if (CURRENT_PROFILE && name.startsWith('ch')) trackRecent(name);
     // when entering a chapter, reset stepper to first step + show completed banner if applicable
-    if (name === 'ch1') resetChapterStepper('ch1');
-    if (name === 'ch2') resetChapterStepper('ch2');
-    if (name === 'ch17') resetChapterStepper('ch17');
+    if (CHAPTER_TOTAL[name]) resetChapterStepper(name);
   }
   function resumeLast() {
     const last = profGet('lastPage') || 'toc';
@@ -8378,10 +8620,58 @@ Draft:
   const CHAPTER_TIMES = {
     ch1: [6, 4, 3, 1],
     ch2: [12, 10, 8, 6, 5, 3, 1],
-    ch17: [3, 6, 6, 5, 5, 4, 2]
+    ch3: [4, 5, 5, 4, 4, 4, 2],
+    ch4: [4, 5, 5, 5, 4, 4, 2],
+    ch5: [4, 4, 5, 5, 5, 4, 2],
+    ch6: [3, 5, 4, 5, 4, 4, 2],
+    ch7: [4, 5, 5, 5, 4, 4, 2],
+    ch8: [4, 5, 5, 5, 4, 4, 2],
+    ch9: [4, 4, 5, 5, 5, 4, 2],
+    ch10: [4, 5, 5, 5, 4, 4, 2],
+    ch11: [4, 5, 5, 5, 4, 4, 2],
+    ch12: [4, 5, 5, 5, 4, 4, 2],
+    ch13: [4, 5, 5, 5, 4, 4, 2],
+    ch14: [4, 5, 5, 5, 4, 4, 2],
+    ch15: [4, 5, 5, 5, 4, 4, 2],
+    ch16: [4, 4, 5, 5, 5, 4, 2],
+    ch17: [3, 6, 6, 5, 5, 4, 2],
+    ch18: [4, 5, 5, 5, 4, 4, 2],
+    ch19: [4, 5, 5, 5, 4, 4, 2],
+    ch20: [4, 5, 5, 5, 4, 4, 2],
+    ch21: [4, 5, 5, 5, 4, 4, 2],
+    ch22: [4, 5, 5, 5, 4, 4, 2]
   };
-  const CHAPTER_TOTAL = { ch1: 4, ch2: 7, ch17: 7 };
-  const chapterCurrent = { ch1: 1, ch2: 1, ch17: 1 };
+  const CHAPTER_TOTAL = {};
+  const chapterCurrent = {};
+  Object.keys(CHAPTER_TIMES).forEach(k => {
+    CHAPTER_TOTAL[k] = CHAPTER_TIMES[k].length;
+    chapterCurrent[k] = 1;
+  });
+  // map chapter prefix → completion meta (id, xp, badge name, foundations bump)
+  const CHAPTER_META = {
+    ch1:  { id: 'big-picture',         xp: 100, badge: 'map-not-territory',     foundDelta: 8 },
+    ch2:  { id: 'embeddings',          xp: 150, badge: 'embeddings-demystified', foundDelta: 10 },
+    ch3:  { id: 'three-flavors',       xp: 120, badge: 'flavor-chooser',         foundDelta: 5 },
+    ch4:  { id: 'loss-training',       xp: 150, badge: 'loss-whisperer',         foundDelta: 7 },
+    ch5:  { id: 'neural-networks',     xp: 130, badge: 'layer-cake',             foundDelta: 6 },
+    ch6:  { id: 'tokenization',        xp: 110, badge: 'token-counter',          foundDelta: 4 },
+    ch7:  { id: 'attention',           xp: 160, badge: 'attention-paid',         foundDelta: 7 },
+    ch8:  { id: 'transformer',         xp: 160, badge: 'transformer-mapper',     foundDelta: 7 },
+    ch9:  { id: 'context-cache',       xp: 120, badge: 'inference-economist',   foundDelta: 5 },
+    ch10: { id: 'how-trained',         xp: 140, badge: 'training-staged',       foundDelta: 6 },
+    ch11: { id: 'reasoning',           xp: 150, badge: 'thinks-out-loud',       foundDelta: 6 },
+    ch12: { id: 'rag-end-to-end',      xp: 150, badge: 'retriever-builder',     foundDelta: 6 },
+    ch13: { id: 'rag-vs-context-vs-ft', xp: 130, badge: 'tool-fitter',          foundDelta: 5 },
+    ch14: { id: 'tools-agents',        xp: 150, badge: 'agent-handler',         foundDelta: 6 },
+    ch15: { id: 'prompting',           xp: 120, badge: 'prompt-fluent',         foundDelta: 5 },
+    ch16: { id: 'mcp',                 xp: 110, badge: 'plumbing-expert',       foundDelta: 4 },
+    ch17: { id: 'critical-reader',     xp: 200, badge: 'critical-reader',       foundDelta: 6 },
+    ch18: { id: 'fda-samd',            xp: 130, badge: 'reg-savvy',             foundDelta: 5 },
+    ch19: { id: 'bias-equity',         xp: 160, badge: 'equity-eyes',           foundDelta: 6 },
+    ch20: { id: 'ambient-scribes',     xp: 140, badge: 'scribe-skeptic',        foundDelta: 5 },
+    ch21: { id: 'nephrology-ai',       xp: 170, badge: 'home-turf',             foundDelta: 7 },
+    ch22: { id: 'pilot-to-prod',       xp: 180, badge: 'production-realist',   foundDelta: 7 }
+  };
 
   function showStep(prefix, n) {
     const total = CHAPTER_TOTAL[prefix];
@@ -8413,20 +8703,15 @@ Draft:
     try {
       const state = JSON.parse(stateRaw);
       const done = state.sectionsCompleted || [];
-      const ch1Banner = document.getElementById('ch1Completed');
-      const ch2Banner = document.getElementById('ch2Completed');
-      const ch17Banner = document.getElementById('ch17Completed');
-      if (ch1Banner) ch1Banner.style.display = done.includes('big-picture') ? '' : 'none';
-      if (ch2Banner) ch2Banner.style.display = done.includes('embeddings') ? '' : 'none';
-      if (ch17Banner) ch17Banner.style.display = done.includes('critical-reader') ? '' : 'none';
+      Object.keys(CHAPTER_META).forEach(prefix => {
+        const banner = document.getElementById(prefix + 'Completed');
+        if (banner) banner.style.display = done.includes(CHAPTER_META[prefix].id) ? '' : 'none';
+      });
     } catch(e) {}
   }
   function markChapterComplete(prefix) {
     if (!CURRENT_PROFILE) return;
-    const map = { ch1: { id: 'big-picture', xp: 100, badge: 'map-not-territory', foundDelta: 8 },
-                  ch2: { id: 'embeddings', xp: 150, badge: 'embeddings-demystified', foundDelta: 10 },
-                  ch17: { id: 'critical-reader', xp: 200, badge: 'critical-reader', foundDelta: 6 } };
-    const cfg = map[prefix];
+    const cfg = CHAPTER_META[prefix];
     if (!cfg) return;
     let state = {};
     try {
@@ -8457,9 +8742,10 @@ Draft:
       if (chapterCurrent[prefix] < CHAPTER_TOTAL[prefix]) showStep(prefix, chapterCurrent[prefix] + 1);
     });
   }
-  wireChapterNav('ch1');
-  wireChapterNav('ch2');
-  wireChapterNav('ch17');
+  // wire chapter nav for every chapter that exists in the DOM
+  Object.keys(CHAPTER_TOTAL).forEach(prefix => {
+    if (document.getElementById(prefix + 'Next')) wireChapterNav(prefix);
+  });
 
   // ============= EMBEDDING PLAYGROUND =============
   const words = [
